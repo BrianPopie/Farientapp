@@ -1,0 +1,44 @@
+[
+  {
+    "id": "aur_sti_2024",
+    "companyId": "aur",
+    "name": "AUR Annual Incentive",
+    "year": 2024,
+    "metricWeights": [
+      { "metricId": "revenue_growth", "weightPct": 45 },
+      { "metricId": "ebitda_margin", "weightPct": 35 },
+      { "metricId": "esg_index", "weightPct": 20 }
+    ]
+  },
+  {
+    "id": "aur_lti_2024",
+    "companyId": "aur",
+    "name": "AUR Transformation PSU",
+    "year": 2024,
+    "metricWeights": [
+      { "metricId": "tsr", "weightPct": 60 },
+      { "metricId": "innovation", "weightPct": 40 }
+    ]
+  },
+  {
+    "id": "bor_sti_2024",
+    "companyId": "bor",
+    "name": "BOR Operational Bonus",
+    "year": 2024,
+    "metricWeights": [
+      { "metricId": "ebitda_margin", "weightPct": 40 },
+      { "metricId": "innovation", "weightPct": 30 },
+      { "metricId": "esg_index", "weightPct": 30 }
+    ]
+  },
+  {
+    "id": "bor_lti_2024",
+    "companyId": "bor",
+    "name": "BOR Growth PSU",
+    "year": 2024,
+    "metricWeights": [
+      { "metricId": "tsr", "weightPct": 50 },
+      { "metricId": "revenue_growth", "weightPct": 50 }
+    ]
+  }
+]

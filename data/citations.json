@@ -1,0 +1,42 @@
+[
+  {
+    "id": "cit_aur_sct_row1",
+    "companyId": "aur",
+    "filing": "DEF14A",
+    "year": 2024,
+    "page": 42,
+    "lineStart": 12,
+    "lineEnd": 20,
+    "text": "Summary Compensation Table for fiscal 2024 describing CEO total compensation of $13.2M."
+  },
+  {
+    "id": "cit_aur_p4p",
+    "companyId": "aur",
+    "filing": "DEF14A",
+    "year": 2024,
+    "page": 55,
+    "lineStart": 2,
+    "lineEnd": 11,
+    "text": "Pay versus Performance discussion referencing TSR alignment and AI milestones."
+  },
+  {
+    "id": "cit_bor_retention",
+    "companyId": "bor",
+    "filing": "8-K",
+    "year": 2024,
+    "page": 3,
+    "lineStart": 15,
+    "lineEnd": 24,
+    "text": "Retention awards granted to Borealis executives prior to Say-on-Pay vote."
+  },
+  {
+    "id": "cit_bor_policy",
+    "companyId": "bor",
+    "filing": "DEF14A",
+    "year": 2024,
+    "page": 67,
+    "lineStart": 9,
+    "lineEnd": 18,
+    "text": "Policy table summarizing changes to performance metrics and vesting structures."
+  }
+]

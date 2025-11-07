@@ -1,0 +1,8 @@
+[
+  { "id": "aur_ceo", "companyId": "aur", "name": "Maya Torres", "role": "CEO", "tenureYears": 4.2 },
+  { "id": "aur_cfo", "companyId": "aur", "name": "Evan Burke", "role": "CFO", "tenureYears": 3.5 },
+  { "id": "aur_chro", "companyId": "aur", "name": "Priya Shah", "role": "CHRO", "tenureYears": 5.1 },
+  { "id": "bor_ceo", "companyId": "bor", "name": "Jonas Kline", "role": "CEO", "tenureYears": 6.0 },
+  { "id": "bor_cfo", "companyId": "bor", "name": "Ruth Delgado", "role": "CFO", "tenureYears": 4.0 },
+  { "id": "bor_coo", "companyId": "bor", "name": "Leo Anders", "role": "COO", "tenureYears": 2.8 }
+]

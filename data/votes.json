@@ -1,0 +1,26 @@
+[
+  {
+    "id": "aur_vote_2024",
+    "companyId": "aur",
+    "year": 2024,
+    "sayOnPayPct": 0.89,
+    "issReco": "FOR",
+    "glReco": "FOR"
+  },
+  {
+    "id": "aur_vote_2023",
+    "companyId": "aur",
+    "year": 2023,
+    "sayOnPayPct": 0.82,
+    "issReco": "FOR",
+    "glReco": "AGAINST"
+  },
+  {
+    "id": "bor_vote_2024",
+    "companyId": "bor",
+    "year": 2024,
+    "sayOnPayPct": 0.72,
+    "issReco": "AGAINST",
+    "glReco": "AGAINST"
+  }
+]

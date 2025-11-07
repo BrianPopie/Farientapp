@@ -1,0 +1,7 @@
+[
+  { "id": "tsr", "name": "Total Shareholder Return", "category": "Market", "definition": "Compound TSR versus peers over 3 years." },
+  { "id": "revenue_growth", "name": "Revenue Growth", "category": "Financial", "definition": "YoY revenue CAGR against plan." },
+  { "id": "ebitda_margin", "name": "Adjusted EBITDA Margin", "category": "Financial", "definition": "Adjusted EBITDA as percent of revenue." },
+  { "id": "esg_index", "name": "ESG Index Score", "category": "ESG", "definition": "Progress against ESG-linked KPIs and stewardship commitments." },
+  { "id": "innovation", "name": "Innovation Velocity", "category": "Operational", "definition": "Weighted score for new product launches and patent filings." }
+]

@@ -1,0 +1,97 @@
+[
+  {
+    "id": "run-101",
+    "runAt": "2025-11-07T03:00:00.000Z",
+    "companyId": "aur",
+    "status": "success",
+    "steps": [
+      {
+        "name": "Gatherer",
+        "startedAt": "2025-11-07T03:00:00.000Z",
+        "finishedAt": "2025-11-07T03:00:45.000Z",
+        "logs": ["Fetched DEF 14A 2024", "Queued PDF to parser"]
+      },
+      {
+        "name": "Extractor",
+        "startedAt": "2025-11-07T03:00:45.000Z",
+        "finishedAt": "2025-11-07T03:02:12.000Z",
+        "logs": ["Tables parsed with 98% confidence"]
+      },
+      {
+        "name": "Analyst",
+        "startedAt": "2025-11-07T03:02:12.000Z",
+        "finishedAt": "2025-11-07T03:04:32.000Z",
+        "logs": ["Benchmark summary drafted", "Linked 32 citations"]
+      },
+      {
+        "name": "QA",
+        "startedAt": "2025-11-07T03:04:32.000Z",
+        "finishedAt": "2025-11-07T03:05:10.000Z",
+        "logs": ["No blocking issues"]
+      },
+      {
+        "name": "Report",
+        "startedAt": "2025-11-07T03:05:10.000Z",
+        "finishedAt": "2025-11-07T03:05:50.000Z",
+        "logs": ["Slides rendered", "Docs exported draft"]
+      }
+    ]
+  },
+  {
+    "id": "run-099",
+    "runAt": "2025-11-05T19:22:00.000Z",
+    "companyId": "bor",
+    "status": "error",
+    "steps": [
+      {
+        "name": "Gatherer",
+        "startedAt": "2025-11-05T19:22:00.000Z",
+        "finishedAt": "2025-11-05T19:22:31.000Z",
+        "logs": ["Fetched DEF 14A 2024"]
+      },
+      {
+        "name": "Extractor",
+        "startedAt": "2025-11-05T19:22:31.000Z",
+        "finishedAt": "2025-11-05T19:24:15.000Z",
+        "logs": ["Table OCR fallback engaged", "Grant grid missing totals"]
+      },
+      {
+        "name": "Analyst",
+        "startedAt": "2025-11-05T19:24:15.000Z",
+        "logs": ["Blocked on missing comp totals"]
+      }
+    ]
+  },
+  {
+    "id": "run-098",
+    "runAt": "2025-11-04T16:45:00.000Z",
+    "companyId": "aur",
+    "status": "success",
+    "steps": [
+      {
+        "name": "Gatherer",
+        "startedAt": "2025-11-04T16:45:00.000Z",
+        "finishedAt": "2025-11-04T16:45:32.000Z",
+        "logs": ["Fetched Form 4 filings", "Enriched insider transactions"]
+      },
+      {
+        "name": "Extractor",
+        "startedAt": "2025-11-04T16:45:32.000Z",
+        "finishedAt": "2025-11-04T16:47:03.000Z",
+        "logs": ["Parsed grants table", "Linked 12 citations"]
+      },
+      {
+        "name": "Analyst",
+        "startedAt": "2025-11-04T16:47:03.000Z",
+        "finishedAt": "2025-11-04T16:48:30.000Z",
+        "logs": ["Outlier detection flagged retention award"]
+      },
+      {
+        "name": "QA",
+        "startedAt": "2025-11-04T16:48:30.000Z",
+        "finishedAt": "2025-11-04T16:49:00.000Z",
+        "logs": ["Verified anomaly context"]
+      }
+    ]
+  }
+]

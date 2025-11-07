@@ -1,0 +1,22 @@
+[
+  {
+    "id": "aur",
+    "name": "Aurelius Corp",
+    "ticker": "AUR",
+    "cik": "0001677138",
+    "sector": "Technology",
+    "industry": "Enterprise Software",
+    "size": "Large Cap",
+    "logoUrl": "/logos/aurelius.svg"
+  },
+  {
+    "id": "bor",
+    "name": "Borealis Ltd",
+    "ticker": "BOR",
+    "cik": "0001402239",
+    "sector": "Industrials",
+    "industry": "Clean Energy Equipment",
+    "size": "Mid Cap",
+    "logoUrl": "/logos/borealis.svg"
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "pol_aur_2026",
+    "yearFrom": 2025,
+    "yearTo": 2026,
+    "firm": "ISS",
+    "section": "Pay-for-Performance",
+    "changeSummary": "Raised TSR relative performance threshold to 65th percentile; added AI governance modifier."
+  },
+  {
+    "id": "pol_bor_2026",
+    "yearFrom": 2024,
+    "yearTo": 2026,
+    "firm": "GlassLewis",
+    "section": "One-Time Awards",
+    "changeSummary": "Flagged retention grants above 2x salary unless tied to performance hurdles."
+  },
+  {
+    "id": "pol_shared_esg",
+    "yearFrom": 2025,
+    "yearTo": 2026,
+    "firm": "ISS",
+    "section": "ESG Integration",
+    "changeSummary": "Introduced scoring uplift for auditable Scope 3 targets with third-party assurance."
+  }
+]

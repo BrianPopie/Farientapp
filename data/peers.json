@@ -1,0 +1,16 @@
+[
+  {
+    "id": "aur_peers_2024",
+    "companyId": "aur",
+    "year": 2024,
+    "rule": "SaaS revenue $1B-$6B · North America · 500-0bps TSR band",
+    "peers": ["Intellia Cloud", "Gravitas Analytics", "SignalPath", "Orison AI", "Halcyon Works"]
+  },
+  {
+    "id": "bor_peers_2024",
+    "companyId": "bor",
+    "year": 2024,
+    "rule": "Clean energy equipment · Revenue $400M-$2B · Beta 1.1-1.5",
+    "peers": ["HelioDyne", "Nordessa Energy", "VastWind", "Polar Grid", "FluxPower"]
+  }
+]

@@ -1,0 +1,66 @@
+[
+  {
+    "id": "aur_ceo_psu_2024",
+    "companyId": "aur",
+    "execId": "aur_ceo",
+    "year": 2024,
+    "type": "PSU",
+    "valueUSD": 6800000,
+    "metrics": [
+      { "metricId": "tsr", "target": "60th percentile vs peer set" },
+      { "metricId": "innovation", "target": "Launch 4 AI copilots" }
+    ]
+  },
+  {
+    "id": "aur_ceo_rsu_2024",
+    "companyId": "aur",
+    "execId": "aur_ceo",
+    "year": 2024,
+    "type": "RSU",
+    "valueUSD": 4200000,
+    "metrics": []
+  },
+  {
+    "id": "aur_cfo_option_2024",
+    "companyId": "aur",
+    "execId": "aur_cfo",
+    "year": 2024,
+    "type": "StockOption",
+    "valueUSD": 2200000,
+    "metrics": [
+      { "metricId": "revenue_growth", "target": "18% CAGR" }
+    ]
+  },
+  {
+    "id": "bor_ceo_psu_2024",
+    "companyId": "bor",
+    "execId": "bor_ceo",
+    "year": 2024,
+    "type": "PSU",
+    "valueUSD": 3900000,
+    "metrics": [
+      { "metricId": "tsr", "target": "Top quartile vs clean energy peers" },
+      { "metricId": "esg_index", "target": "+15 pt uplift" }
+    ]
+  },
+  {
+    "id": "bor_cfo_rsu_2024",
+    "companyId": "bor",
+    "execId": "bor_cfo",
+    "year": 2024,
+    "type": "RSU",
+    "valueUSD": 1700000,
+    "metrics": []
+  },
+  {
+    "id": "bor_coo_rsu_2024",
+    "companyId": "bor",
+    "execId": "bor_coo",
+    "year": 2024,
+    "type": "RSU",
+    "valueUSD": 1400000,
+    "metrics": [
+      { "metricId": "innovation", "target": "Commission 3 microgrid pilots" }
+    ]
+  }
+]
