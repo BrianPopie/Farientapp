@@ -1,0 +1,14 @@
+node_modules
+.pnpm-store
+.next
+out
+dist
+.turbo
+.eslintcache
+.env
+.env.*
+!.env.example
+.vercel
+*.log
+*.tsbuildinfo
+coverage
