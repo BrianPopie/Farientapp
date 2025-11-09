@@ -3,17 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Database, FileStack, Gauge, ShieldAlert, Workflow, Presentation, Cog, Home } from "lucide-react";
+import { FileStack, Presentation, Cog, Home, MessageSquare } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
   { href: "/", label: "Overview", icon: Home },
   { href: "/filings", label: "Ingestion", icon: FileStack },
-  { href: "/lakehouse", label: "Lakehouse", icon: Database },
-  { href: "/analytics", label: "Analytics", icon: Gauge },
-  { href: "/policy", label: "Policy", icon: ShieldAlert },
-  { href: "/agents", label: "Agents", icon: Workflow },
+  { href: "/chatbot", label: "AI Chatbot", icon: MessageSquare },
   { href: "/reports", label: "Reports", icon: Presentation },
   { href: "/admin", label: "Admin", icon: Cog }
 ];

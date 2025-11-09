@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import citations from "@/data/citations.json";
 import { Badge } from "@/components/ui/badge";
 import type { Citation } from "@/lib/types";
+import { AiInsightPanel } from "@/components/AiInsightPanel";
 
 const files = [
   {
@@ -79,6 +80,10 @@ const entityNormalization = {
     { label: "Retention RSU (8-K)", status: "needs review" }
   ]
 };
+
+const ingestionSystemPrompt = `You are a filings ingestion copilot for Farient. Provide succinct updates about the mock pipeline, including
+the Gather->Index stepper, entity normalization statuses, and the confidence/queue metrics (accuracy 98.4%, OCR fallback on 1 filing, 28 issuers queued).
+When asked, mention citations or filings by name and recommend the next best action for analysts. Keep responses under 120 words.`;
 
 export default function FilingsPage() {
   return (
@@ -165,7 +170,7 @@ export default function FilingsPage() {
         </Card>
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-2">
+      <section className="grid gap-6 lg:grid-cols-3">
         <Card>
           <CardHeader>
             <CardTitle>Entity normalization</CardTitle>
@@ -219,6 +224,17 @@ export default function FilingsPage() {
             </div>
           </CardContent>
         </Card>
+        <AiInsightPanel
+          className="lg:col-span-1"
+          title="Ingestion copilot"
+          description="Ask Farient AI about filings, pipeline status, or citation provenance."
+          systemPrompt={ingestionSystemPrompt}
+          placeholder="e.g., Where are the current ingestion bottlenecks?"
+          suggestions={[
+            "Summarize the ingestion pipeline and confidence levels.",
+            "Which normalization items require analyst review?"
+          ]}
+        />
       </section>
     </div>
   );

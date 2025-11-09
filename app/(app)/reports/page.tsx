@@ -2,10 +2,11 @@
 
 import * as React from "react";
 import { ReportPreview } from "@/components/ReportPreview";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import AiChatBox from "@/components/AiChatBox";
 
 export default function ReportsPage() {
   const [template, setTemplate] = React.useState("Board ready v3");
@@ -65,6 +66,16 @@ export default function ReportsPage() {
           </CardContent>
         </Card>
       </section>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Board copilot</CardTitle>
+          <CardDescription>Draft talking points, summaries, or appendix notes with Farient’s AI assistant.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <AiChatBox systemPrompt="You are Farient's board-report copilot. Help write concise executive compensation summaries, board chair talking points, and appendix notes grounded in the dashboard context (TSR vs comp, benchmarking deltas, policy risks). Keep answers under 150 words and suggest next steps when possible." />
+        </CardContent>
+      </Card>
     </div>
   );
 }
