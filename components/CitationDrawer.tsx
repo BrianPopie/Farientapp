@@ -48,8 +48,8 @@ export function CitationDrawer() {
       return (
         <div className="space-y-4 p-6">
           <p className="text-sm text-muted-foreground">{payload.data.changeSummary}</p>
-          <div className="rounded-2xl border border-white/5 bg-white/5 p-4 text-xs text-muted-foreground">
-            Versioned rule pack placeholder — plug ISS / Glass Lewis API here.
+          <div className="rounded-2xl border border-border bg-card p-4 text-xs text-muted-foreground">
+            Versioned rule pack placeholder - plug ISS / Glass Lewis API here.
           </div>
         </div>
       );
@@ -57,7 +57,7 @@ export function CitationDrawer() {
 
     return (
       <div className="space-y-4 p-6">
-        <p className="rounded-2xl border border-white/5 bg-white/5 p-4 text-sm leading-relaxed">{payload.data.text}</p>
+        <p className="rounded-2xl border border-border bg-card p-4 text-sm leading-relaxed">{payload.data.text}</p>
         <dl className="grid grid-cols-2 gap-4 text-xs text-muted-foreground">
           <div>
             <dt className="uppercase">Filing</dt>

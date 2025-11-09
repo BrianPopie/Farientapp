@@ -20,7 +20,7 @@ export function Stepper({ steps }: StepperProps) {
                 ? "border-emerald-300 text-emerald-200"
                 : step.status === "current"
                   ? "border-primary text-primary"
-                  : "border-white/10 text-muted-foreground"
+                  : "border-border text-muted-foreground"
             }`}
           >
             {index + 1}

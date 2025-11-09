@@ -49,7 +49,7 @@ export default function ReportsPage() {
                   type="color"
                   value={brandColor}
                   onChange={(event) => setBrandColor(event.target.value)}
-                  className="h-12 w-12 cursor-pointer rounded-2xl border border-white/10 p-1"
+                  className="h-12 w-12 cursor-pointer rounded-2xl border border-border p-1"
                 />
                 <Input value={brandColor} onChange={(event) => setBrandColor(event.target.value)} />
               </div>

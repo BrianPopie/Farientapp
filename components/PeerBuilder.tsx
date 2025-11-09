@@ -16,7 +16,7 @@ export function PeerBuilder() {
   const { baseCompanyId, filters, peerSet, setBaseCompany, setFilters } = usePeerStore();
 
   return (
-    <div className="rounded-3xl border border-white/5 bg-white/5 p-6">
+    <div className="rounded-3xl border border-border bg-card p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-xs uppercase tracking-wide text-muted-foreground">Base company</p>
@@ -109,7 +109,7 @@ export function PeerBuilder() {
         <p className="text-xs uppercase tracking-wide text-muted-foreground">Selected peers</p>
         <div className="mt-3 flex flex-wrap gap-2">
           {peerSet.map((peer) => (
-            <Badge key={peer} variant="outline" className="border-white/15 bg-white/5">
+            <Badge key={peer} variant="outline" className="border-border bg-card">
               {peer}
             </Badge>
           ))}

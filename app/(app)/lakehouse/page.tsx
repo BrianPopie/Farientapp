@@ -45,7 +45,7 @@ export default function LakehousePage() {
             <CardTitle>Schema relationships</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="rounded-3xl border border-white/5 bg-white/5 p-6">
+            <div className="rounded-3xl border border-border bg-card p-6">
               <svg viewBox="0 0 600 260" className="h-64 w-full">
                 {schemaNodes.map((node, index) => {
                   const angle = (index / schemaNodes.length) * Math.PI * 2;
@@ -53,16 +53,49 @@ export default function LakehousePage() {
                   const cy = 130 + Math.sin(angle) * 90;
                   return (
                     <g key={node}>
-                      <circle cx={cx} cy={cy} r={42} className="fill-[#0f172a] stroke-[#1f2937] stroke-2" />
-                      <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle" className="fill-white text-xs font-semibold">
+                      <circle
+                        cx={cx}
+                        cy={cy}
+                        r={42}
+                        className="stroke-2"
+                        style={{ fill: "rgb(var(--card))", stroke: "rgb(var(--border))" }}
+                      />
+                      <text
+                        x={cx}
+                        y={cy}
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        className="text-xs font-semibold"
+                        style={{ fill: "rgb(var(--foreground))" }}
+                      >
                         {node}
                       </text>
-                      <line x1={cx} y1={cy} x2={300} y2={130} className="stroke-white/15" />
+                      <line
+                        x1={cx}
+                        y1={cy}
+                        x2={300}
+                        y2={130}
+                        strokeWidth={2}
+                        style={{ stroke: "rgba(var(--border),0.5)" }}
+                      />
                     </g>
                   );
                 })}
-                <circle cx={300} cy={130} r={55} className="fill-[#1d2839] stroke-[#4cddff] stroke-2" />
-                <text x={300} y={130} textAnchor="middle" dominantBaseline="middle" className="fill-white text-sm font-semibold">
+                <circle
+                  cx={300}
+                  cy={130}
+                  r={55}
+                  className="stroke-2"
+                  style={{ fill: "rgb(var(--card))", stroke: "rgb(var(--chart-1))" }}
+                />
+                <text
+                  x={300}
+                  y={130}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  className="text-sm font-semibold"
+                  style={{ fill: "rgb(var(--foreground))" }}
+                >
                   Postgres + pgvector
                 </text>
               </svg>
@@ -115,7 +148,7 @@ export default function LakehousePage() {
         </Card>
       </section>
 
-      <section className="rounded-3xl border border-white/5 bg-white/5 p-6">
+      <section className="rounded-3xl border border-border bg-card p-6">
         <p className="text-sm font-semibold">Semantic search (mocked)</p>
         <div className="mt-4 flex flex-col gap-3 lg:flex-row">
           <Input
@@ -129,9 +162,9 @@ export default function LakehousePage() {
           </Button>
         </div>
         <div className="mt-4 space-y-3">
-          {results.hits.length === 0 && <p className="text-sm text-muted-foreground">No hits yet — try another phrase.</p>}
+          {results.hits.length === 0 && <p className="text-sm text-muted-foreground">No hits yet - try another phrase.</p>}
           {results.hits.map((hit) => (
-            <div key={hit.id} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <div key={hit.id} className="rounded-2xl border border-border bg-card p-4">
               <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                   <p className="text-sm font-semibold">{hit.title}</p>
@@ -151,7 +184,7 @@ export default function LakehousePage() {
         </div>
       </section>
 
-      <section className="rounded-3xl border border-dashed border-white/10 bg-white/5 p-6">
+      <section className="rounded-3xl border border-dashed border-border bg-card p-6">
         <p className="text-xs uppercase tracking-wide text-muted-foreground">Source-bounded rag</p>
         <p className="text-sm text-muted-foreground">
           Link below shows how citations from the lakehouse reference the same provenance drawer the filings page uses.

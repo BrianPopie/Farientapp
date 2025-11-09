@@ -43,7 +43,7 @@ export default function AdminPage() {
           </CardHeader>
           <CardContent className="space-y-3">
             {roles.map((role) => (
-              <div key={role.role} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div key={role.role} className="flex items-center justify-between rounded-2xl border border-border bg-card p-4">
                 <div>
                   <p className="text-sm font-semibold">{role.role}</p>
                   <p className="text-xs text-muted-foreground">{role.owner}</p>
@@ -92,25 +92,25 @@ export default function AdminPage() {
             <CardTitle>System health</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <div className="rounded-2xl border border-border bg-card p-4">
               <p className="text-xs uppercase text-muted-foreground">Rate limit</p>
               <p className="text-2xl font-semibold">62%</p>
               <p className="text-xs text-muted-foreground">Auto backoff enabled</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <div className="rounded-2xl border border-border bg-card p-4">
               <p className="text-xs uppercase text-muted-foreground">Retry queue</p>
               <p className="text-2xl font-semibold">4 jobs</p>
               <p className="text-xs text-muted-foreground">Last failure 7m ago</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <div className="rounded-2xl border border-border bg-card p-4">
               <p className="text-xs uppercase text-muted-foreground">Audit log</p>
               <p className="text-2xl font-semibold">132 events</p>
               <p className="text-xs text-muted-foreground">View in Supabase</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <div className="rounded-2xl border border-border bg-card p-4">
               <p className="text-xs uppercase text-muted-foreground">Extraction accuracy</p>
               <p className="text-2xl font-semibold">96.8%</p>
-              <p className="text-xs text-muted-foreground">QA trend ↑ 1.2%</p>
+              <p className="text-xs text-muted-foreground">QA trend +1.2%</p>
             </div>
           </CardContent>
         </Card>
@@ -120,11 +120,11 @@ export default function AdminPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             {integrations.map((integration) => (
-              <div key={integration.name} className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div key={integration.name} className="flex items-center justify-between rounded-2xl border border-border bg-card p-4">
                 <div>
                   <p className="text-sm font-semibold">{integration.name}</p>
                   <p className="text-xs text-muted-foreground">
-                    {integration.connected ? "Connected — click to disconnect" : "Not connected — mocked"}
+                    {integration.connected ? "Connected - click to disconnect" : "Not connected - mocked"}
                   </p>
                 </div>
                 <Switch checked={integration.connected} onCheckedChange={() => {}} aria-label={`${integration.name} toggle`} />

@@ -101,7 +101,7 @@ export default function FilingsPage() {
         </div>
       </section>
 
-      <section className="rounded-3xl border border-white/5 bg-white/5 p-6">
+      <section className="rounded-3xl border border-border bg-card p-6">
         <p className="text-sm font-semibold">Pipeline status</p>
         <Stepper steps={stepperData} />
         <div className="mt-6 flex flex-wrap gap-3 text-sm text-muted-foreground">
@@ -209,7 +209,7 @@ export default function FilingsPage() {
           </CardHeader>
           <CardContent className="flex flex-1 flex-col justify-between">
             <p className="text-sm text-muted-foreground">
-              Every table cell is stamped with `page:line`. Click a citation to open the right drawer preview — align with your document
+              Every table cell is stamped with `page:line`. Click a citation to open the right drawer preview - align with your document
               viewer or storage bucket later.
             </p>
             <div className="mt-4 flex flex-wrap gap-2">

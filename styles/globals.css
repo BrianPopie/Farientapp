@@ -2,62 +2,58 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: 220 23% 7%;
-  --foreground: 210 22% 98%;
-  --muted: 220 15% 18%;
-  --muted-foreground: 215 14% 75%;
-  --accent: 195 87% 41%;
-  --accent-foreground: 210 20% 96%;
-  --card: 225 23% 10%;
-  --card-foreground: 210 24% 96%;
-  --border: 223 17% 22%;
-  --input: 223 17% 22%;
-  --primary: 195 100% 55%;
-  --primary-foreground: 210 20% 98%;
-  --secondary: 250 80% 65%;
-  --secondary-foreground: 210 24% 98%;
-  --destructive: 0 85% 60%;
-  --destructive-foreground: 210 24% 98%;
-  --ring: 195 100% 55%;
-  --radius: 1rem;
-  --popover: 225 23% 12%;
-  --popover-foreground: 210 24% 96%;
-}
+/* === Semantic color tokens === */
+@layer base {
+  :root {
+    /* Light */
+    --background: 246 247 252;
+    --foreground: 17 24 39;
+    --card: 255 255 255;
+    --card-foreground: 17 24 39;
+    --muted: 241 245 249;
+    --muted-foreground: 100 116 139;
+    --border: 226 232 240;
+    --primary: 56 189 248;
+    --primary-foreground: 3 7 18;
+    --success: 52 211 153;
+    --warning: 245 158 11;
+    --danger: 239 68 68;
+    --chart-1: 56 189 248;
+    --chart-2: 52 211 153;
+    --chart-3: 245 158 11;
+    --radius: 16px;
+  }
 
-.light :root,
-.light {
-  --background: 0 0% 100%;
-  --foreground: 222 47% 11%;
-  --muted: 217 16% 84%;
-  --muted-foreground: 215 14% 34%;
-  --accent: 195 80% 36%;
-  --accent-foreground: 210 40% 98%;
-  --card: 0 0% 100%;
-  --card-foreground: 222 47% 11%;
-  --border: 214 32% 91%;
-  --input: 214 32% 91%;
-  --primary: 242 76% 60%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 195 80% 45%;
-  --secondary-foreground: 210 40% 98%;
-  --destructive: 0 65% 52%;
-  --destructive-foreground: 210 40% 98%;
-  --ring: 242 76% 60%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 222 47% 11%;
-}
+  .dark {
+    /* Graphite dashboard theme */
+    --background: 10 14 20;
+    --foreground: 214 226 240;
+    --card: 16 22 32;
+    --card-foreground: 214 226 240;
+    --muted: 21 28 40;
+    --muted-foreground: 142 160 180;
+    --border: 32 45 64;
+    --primary: 59 130 246;
+    --primary-foreground: 3 7 18;
+    --success: 34 197 94;
+    --warning: 245 158 11;
+    --danger: 248 113 113;
+    --chart-1: 59 130 246;
+    --chart-2: 34 197 94;
+    --chart-3: 251 191 36;
+  }
 
-* {
-  @apply border-border;
-}
+  * {
+    @apply border-border;
+  }
 
-body {
-  @apply bg-background text-foreground antialiased min-h-screen;
+  body {
+    @apply min-h-screen bg-background text-foreground antialiased font-sans;
+  }
 }
 
 .glass-panel {
-  @apply rounded-3xl border border-white/10 bg-white/5 backdrop-blur;
+  @apply rounded-xl border border-border bg-card/95 backdrop-blur;
 }
 
 .scroll-gradient {
@@ -65,5 +61,34 @@ body {
 }
 
 :where(a, button, [role="button"]) {
-  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-lg;
+  @apply rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+}
+
+@layer components {
+  .dashboard-grid {
+    container-type: inline-size;
+  }
+
+  .dashboard-grid .bg-card {
+    @apply transition-all duration-300;
+  }
+
+  @container (min-width: 1200px) {
+    .dashboard-grid .bg-card {
+      @apply p-10 text-[15px];
+    }
+  }
+
+  .dashboard-grid .recharts-wrapper {
+    min-height: 360px !important;
+  }
+}
+
+@layer utilities {
+  .card-glow {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+      0 12px 36px rgba(0, 0, 0, 0.4),
+      0 0 60px rgba(56, 189, 248, 0.05);
+  }
 }

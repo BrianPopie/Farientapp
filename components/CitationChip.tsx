@@ -17,7 +17,7 @@ export function CitationChip({ citation, size = "sm" }: CitationChipProps) {
     <Button
       variant="ghost"
       size="sm"
-      className={`group gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-muted-foreground ${
+      className={`group gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground ${
         size === "md" ? "h-9" : "h-8"
       }`}
       onClick={() => openCitation(citation)}

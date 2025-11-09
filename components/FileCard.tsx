@@ -23,7 +23,7 @@ export function FileCard({ title, source, filing, year, status, citationCount }:
   const tone = statusTone[status];
 
   return (
-    <Card className="glass-panel border-white/5 bg-gradient-to-br from-white/5 to-transparent">
+    <Card className="glass-panel border-border bg-gradient-to-br from-card/70 to-transparent">
       <CardContent className="flex flex-col gap-4 p-5">
         <div className="flex items-center justify-between">
           <div>

@@ -37,9 +37,9 @@ export function AgentTimeline({ run }: AgentTimelineProps) {
               >
                 {index + 1}
               </span>
-              {index < run.steps.length - 1 && <span className="h-10 w-px bg-white/10" />}
+              {index < run.steps.length - 1 && <span className="h-10 w-px bg-muted/70" />}
             </div>
-            <div className="rounded-2xl border border-white/5 bg-white/5 p-4">
+            <div className="rounded-2xl border border-border bg-card p-4">
               <div className="flex items-center gap-3">
                 <p className="text-sm font-semibold">{step.name}</p>
                 <span className="text-xs text-muted-foreground">

@@ -5,30 +5,41 @@ import { Bell } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { SearchInput } from "@/components/SearchInput";
+import { cn } from "@/lib/utils";
 
 export function Nav() {
   return (
-    <header className="sticky top-0 z-30 flex flex-col gap-4 border-b border-white/5 bg-background/70 px-6 py-4 backdrop-blur-xl">
-      <div className="flex items-center justify-between gap-3 lg:hidden">
-        <div className="flex items-center gap-2">
-          <Image src="/brand.svg" alt="Farient" width={36} height={36} />
+    <header
+      className={cn(
+        "sticky top-0 z-40 border-b border-border backdrop-blur-md transition-[padding]",
+        "bg-background/70 px-3 py-2"
+      )}
+    >
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex items-center gap-3">
+          <Image src="/brand.svg" alt="Farient" width={32} height={32} className="rounded-lg" />
           <div>
-            <p className="text-base font-semibold">Farient</p>
-            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Executive Intelligence</p>
+            <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground">Deal Intelligence</p>
+            <p className="text-base font-semibold text-foreground">Farient Dashboard</p>
           </div>
         </div>
-        <ThemeToggle />
-      </div>
-
-      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-        <SearchInput />
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="rounded-2xl border border-white/10" type="button">
-            <Bell className="h-4 w-4" />
-          </Button>
-          <ThemeToggle />
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/80 to-secondary/70 text-sm font-semibold">
-            BT
+        <div className="flex flex-1 flex-col gap-3 lg:flex-row lg:items-center lg:justify-end">
+          <div className="w-full max-w-xl">
+            <SearchInput />
+          </div>
+          <div className="flex items-center justify-end gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full border border-border bg-card text-muted-foreground hover:text-foreground"
+              type="button"
+            >
+              <Bell className="h-4 w-4" />
+            </Button>
+            <ThemeToggle />
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
+              BT
+            </div>
           </div>
         </div>
       </div>

@@ -29,7 +29,7 @@ export function UploadDropzone() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-white/10 bg-white/5 px-6 py-10 text-center">
+    <div className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-border bg-card px-6 py-10 text-center">
       <CloudUpload className="h-10 w-10 text-primary" />
       <p className="mt-3 text-sm font-semibold">Upload Proxy or 10-K</p>
       <p className="text-xs text-muted-foreground">Simulated ingestion using placeholder PDF</p>

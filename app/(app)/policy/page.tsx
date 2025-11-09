@@ -71,7 +71,7 @@ export default function PolicyPage() {
         </Card>
       </section>
 
-      <section className="rounded-3xl border border-white/5 bg-white/5 p-6">
+      <section className="rounded-3xl border border-border bg-card p-6">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">Risk register with evidence</h2>
           <DataBadge tone="warning">Linked to citations</DataBadge>
@@ -81,7 +81,7 @@ export default function PolicyPage() {
             const citation = citations.find((c) => c.id === row.evidence) as Citation | undefined;
             if (!citation) return null;
             return (
-              <div key={row.practice} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div key={row.practice} className="rounded-2xl border border-border bg-card p-4">
                 <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
                   <div>
                     <p className="text-sm font-semibold">{row.practice}</p>

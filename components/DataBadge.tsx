@@ -3,11 +3,11 @@
 import { cn } from "@/lib/utils";
 
 const toneMap: Record<string, string> = {
-  success: "bg-emerald-500/15 text-emerald-200",
-  warning: "bg-amber-500/15 text-amber-200",
-  danger: "bg-rose-500/15 text-rose-200",
-  info: "bg-sky-500/15 text-sky-200",
-  neutral: "bg-white/10 text-foreground"
+  success: "text-success",
+  warning: "text-warning",
+  danger: "text-danger",
+  info: "text-primary",
+  neutral: "text-muted-foreground"
 };
 
 export type DataBadgeProps = {
@@ -18,7 +18,13 @@ export type DataBadgeProps = {
 
 export function DataBadge({ tone = "neutral", children, className }: DataBadgeProps) {
   return (
-    <span className={cn("inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium", toneMap[tone], className)}>
+    <span
+      className={cn(
+        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium uppercase tracking-wide bg-muted text-muted-foreground ring-1 ring-border",
+        toneMap[tone],
+        className
+      )}
+    >
       {children}
     </span>
   );

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Database, FileStack, Gauge, ShieldAlert, Workflow, Presentation, Cog, Home } from "lucide-react";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 const navItems = [
   { href: "/", label: "Overview", icon: Home },
@@ -17,20 +18,25 @@ const navItems = [
   { href: "/admin", label: "Admin", icon: Cog }
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  authed: boolean;
+  onSignOut?: () => void;
+}
+
+export function Sidebar({ authed, onSignOut }: SidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="sticky top-0 hidden h-screen w-72 flex-col border-r border-white/5 bg-background/90 p-6 lg:flex">
-      <div className="flex items-center gap-3">
-        <Image src="/brand.svg" width={40} height={40} alt="Farient" />
+    <aside className="sticky top-0 hidden min-h-screen w-[240px] flex-col border-r border-border bg-background/90 p-4 text-foreground shadow-[0_25px_80px_rgba(0,0,0,0.65)] backdrop-blur-sm lg:flex z-20">
+      <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-card/40 px-3 py-2">
+        <Image src="/brand.svg" width={32} height={32} alt="Farient" className="rounded-lg" />
         <div>
-          <p className="text-xl font-semibold">Farient</p>
-          <p className="text-sm text-muted-foreground">Exec Comp Intelligence</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Workspace</p>
+          <p className="text-sm font-semibold text-foreground">Deal Intelligence</p>
         </div>
       </div>
 
-      <nav className="mt-8 flex flex-1 flex-col gap-1">
+      <nav className="mt-6 flex flex-1 flex-col gap-1">
         {navItems.map((item) => {
           const active = pathname === item.href;
           const Icon = item.icon;
@@ -39,23 +45,38 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-4 rounded-2xl px-4 py-3 text-base font-semibold transition hover:bg-white/5",
-                active ? "bg-white/10 text-white" : "text-muted-foreground"
+                "w-full rounded-full px-3 py-2 text-sm font-medium transition data-[active=true]:bg-card data-[active=true]:text-foreground data-[active=true]:shadow-inner hover:bg-muted/70 hover:text-foreground",
+                active ? "text-foreground" : "text-muted-foreground"
               )}
+              data-active={active || undefined}
             >
-              <span
-                className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5 shadow-[0_0_15px_rgba(76,221,255,0.4)] transition",
-                  active ? "text-primary shadow-[0_0_20px_rgba(76,221,255,0.7)]" : "text-muted-foreground"
-                )}
-              >
-                <Icon className="h-5 w-5" />
+              <span className="inline-flex items-center gap-2">
+                <Icon className="h-4 w-4 text-primary" />
+                {item.label}
               </span>
-              {item.label}
             </Link>
           );
         })}
       </nav>
+
+      {authed && (
+        <div className="mt-6 rounded-xl border border-border/70 bg-card/60 p-3 text-xs text-muted-foreground">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-semibold text-foreground">Session</p>
+              <p className="text-[11px] uppercase tracking-wide text-muted-foreground">demo@farient.ai</p>
+            </div>
+            <Button
+              type="button"
+              variant="secondary"
+              className="rounded-full bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary hover:bg-primary/20"
+              onClick={onSignOut}
+            >
+              Sign out
+            </Button>
+          </div>
+        </div>
+      )}
     </aside>
   );
 }

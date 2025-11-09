@@ -32,8 +32,8 @@ export function MeasuredChart({
       {canRender ? (
         children({ width, height })
       ) : (
-        <div className="flex h-full w-full items-center justify-center rounded-3xl border border-white/10 bg-white/5">
-          <div className="h-1/2 w-3/4 animate-pulse rounded-3xl bg-white/10" aria-hidden="true" />
+        <div className="flex h-full w-full items-center justify-center rounded-xl border border-border bg-card">
+          <div className="h-1/2 w-3/4 animate-pulse rounded-xl bg-muted" aria-hidden="true" />
         </div>
       )}
     </div>
