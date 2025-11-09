@@ -44,6 +44,7 @@
     "eslint": "8.57.1",
     "eslint-config-next": "15.0.1",
     "postcss": "8.4.47",
+    "styled-jsx": "5.1.6",
     "tailwindcss": "3.4.13",
     "typescript": "5.6.3"
   },
