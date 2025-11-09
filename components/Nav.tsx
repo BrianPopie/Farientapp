@@ -19,7 +19,7 @@ export function Nav() {
         <div className="flex items-center gap-3">
           <Image src="/brand.svg" alt="Farient" width={32} height={32} className="rounded-lg" />
           <div>
-            <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground">Deal Intelligence</p>
+            <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground">Farient Deal Intelligence</p>
             <p className="text-base font-semibold text-foreground">Farient Dashboard</p>
           </div>
         </div>

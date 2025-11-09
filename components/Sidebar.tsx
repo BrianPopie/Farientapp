@@ -32,7 +32,7 @@ export function Sidebar({ authed, onSignOut }: SidebarProps) {
         <Image src="/brand.svg" width={32} height={32} alt="Farient" className="rounded-lg" />
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Workspace</p>
-          <p className="text-sm font-semibold text-foreground">Deal Intelligence</p>
+          <p className="text-sm font-semibold text-foreground">Farient Deal Intelligence</p>
         </div>
       </div>
 
