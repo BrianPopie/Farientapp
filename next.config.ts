@@ -1,5 +1,8 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  reactStrictMode: true,
+  productionBrowserSourceMaps: true,
   experimental: {
     optimizePackageImports: [
       "lucide-react",
