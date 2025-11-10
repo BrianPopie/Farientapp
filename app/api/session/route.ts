@@ -18,7 +18,8 @@ function setSessionCookie(res: NextResponse, session: SessionPayload | null) {
     maxAge: session ? SESSION_MAX_AGE : 0,
     path: "/",
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production"
+    secure: process.env.NODE_ENV === "production",
+    httpOnly: false
   });
 }
 
