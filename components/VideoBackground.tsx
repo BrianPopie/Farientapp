@@ -16,12 +16,18 @@ type Props = {
   src?: string;
   poster?: string;
   className?: string;
+  forceVideo?: boolean;
 };
 
-export default function VideoBackground({ src = "/animation.mp4", poster, className = "" }: Props) {
-  const [shouldPlayVideo, setShouldPlayVideo] = React.useState(false);
+export default function VideoBackground({ src = "/animation.mp4", poster, className = "", forceVideo = false }: Props) {
+  const [shouldPlayVideo, setShouldPlayVideo] = React.useState(() => forceVideo);
 
   React.useEffect(() => {
+    if (forceVideo) {
+      setShouldPlayVideo(true);
+      return;
+    }
+
     if (typeof window === "undefined") {
       return;
     }
@@ -55,7 +61,7 @@ export default function VideoBackground({ src = "/animation.mp4", poster, classN
       mediaQuery.removeEventListener?.("change", handleChange);
       nav.connection?.removeEventListener?.("change", handleChange);
     };
-  }, []);
+  }, [forceVideo]);
 
   return (
     <div className={`pointer-events-none absolute inset-0 -z-10 ${className}`}>

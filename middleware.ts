@@ -4,6 +4,7 @@ import { SESSION_COOKIE_NAME, parseSession } from "@/lib/auth/session";
 
 const STATIC_PREFIXES = ["/_next", "/images", "/assets"];
 const PUBLIC_FILES = new Set(["/favicon.ico", "/robots.txt", "/sitemap.xml"]);
+const PUBLIC_FILE_REGEX = /\.(.*)$/;
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -13,7 +14,8 @@ export function middleware(request: NextRequest) {
   }
 
   const isStatic = STATIC_PREFIXES.some((prefix) => pathname.startsWith(prefix));
-  const isPublicFile = PUBLIC_FILES.has(pathname);
+  const matchesPublicFile = PUBLIC_FILE_REGEX.test(pathname);
+  const isPublicFile = PUBLIC_FILES.has(pathname) || matchesPublicFile;
 
   if (isStatic || isPublicFile) {
     return NextResponse.next();
