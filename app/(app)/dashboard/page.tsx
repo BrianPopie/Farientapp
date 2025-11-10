@@ -1,14 +1,19 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { ArrowRight, Database, FileStack, Presentation } from "lucide-react";
 import { StatCard } from "@/components/StatCard";
 import { Button } from "@/components/ui/button";
-import { TrendChart } from "@/components/TrendChart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendPoint } from "@/lib/types";
 import { DataBadge } from "@/components/DataBadge";
 import { PageHeading, BodyText, SectionHeading } from "@/components/ui/typography";
+
+const TrendChart = dynamic(() => import("@/components/TrendChart").then((mod) => mod.TrendChart), {
+  ssr: false,
+  loading: () => <div className="h-[320px] rounded-2xl border border-dashed border-border/60 bg-muted/40 animate-pulse" />
+});
 
 const heroTrend: TrendPoint[] = [
   { year: 2020, tsrPct: -3, compUSD: 8400000 },

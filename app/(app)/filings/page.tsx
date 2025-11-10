@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { UploadDropzone } from "@/components/UploadDropzone";
+import dynamic from "next/dynamic";
 import { FileCard } from "@/components/FileCard";
 import { Stepper } from "@/components/Stepper";
 import { DataTable } from "@/components/Table";
@@ -12,6 +12,15 @@ import { Badge } from "@/components/ui/badge";
 import type { Citation, UploadedFiling } from "@/lib/types";
 import { AiInsightPanel } from "@/components/AiInsightPanel";
 import { PageHeading, BodyText } from "@/components/ui/typography";
+
+const UploadDropzone = dynamic(() => import("@/components/UploadDropzone").then((mod) => mod.UploadDropzone), {
+  ssr: false,
+  loading: () => (
+    <div className="flex min-h-[320px] flex-col items-center justify-center rounded-3xl border-2 border-dashed border-border/60 bg-muted/50 text-xs text-text-muted">
+      Preparing uploader…
+    </div>
+  )
+});
 
 const files = [
   {
@@ -117,15 +126,21 @@ export default function FilingsPage() {
     setUploads((prev) => [file, ...prev]);
   };
 
-  const uploadCards = uploads.map((upload) => ({
-    title: upload.name,
-    source: "Upload" as const,
-    filing: "PDF" as const,
-    year: new Date(upload.uploadedAt).getFullYear(),
-    status: "queued" as const,
-    citationCount: 0
-  }));
-  const combinedFiles = [...uploadCards, ...files];
+  const combinedFiles = React.useMemo(
+    () =>
+      [
+        ...uploads.map((upload) => ({
+          title: upload.name,
+          source: "Upload" as const,
+          filing: "PDF" as const,
+          year: new Date(upload.uploadedAt).getFullYear(),
+          status: "queued" as const,
+          citationCount: 0
+        })),
+        ...files
+      ].slice(0, 6),
+    [uploads]
+  );
 
   return (
     <div className="space-y-10">
