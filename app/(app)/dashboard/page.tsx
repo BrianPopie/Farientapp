@@ -1,3 +1,4 @@
+// Server-rendered dashboard that streams the chart via a tiny client island.
 import Link from "next/link";
 import { Suspense } from "react";
 import { ArrowRight, Database, FileStack, Presentation } from "lucide-react";
