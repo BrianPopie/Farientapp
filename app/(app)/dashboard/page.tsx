@@ -30,7 +30,10 @@ const insightCards = [
 export default function DashboardPage() {
   return (
     <>
-      <section className="grid gap-8 xl:grid-cols-[2fr_1.2fr] text-text">
+      <section
+        className="grid gap-8 xl:grid-cols-[2fr_1.2fr] text-text"
+        style={{ contentVisibility: "auto", containIntrinsicSize: "600px" }}
+      >
         <div className="rounded-2xl border border-border bg-surface p-8 shadow-sm">
           <DataBadge tone="info">Executive Compensation Intelligence</DataBadge>
           <PageHeading className="mt-4 text-text">Deal Intelligence Dashboard</PageHeading>
@@ -40,13 +43,15 @@ export default function DashboardPage() {
           </BodyText>
           <div className="mt-6 flex flex-wrap gap-3">
             <Button asChild className="gap-2 text-base">
-              <Link href="/filings">
+              <Link href="/filings" prefetch={false}>
                 Launch ingestion
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
             <Button variant="ghost" asChild className="text-base text-text-muted hover:text-text">
-              <Link href="/reports">Preview board pack</Link>
+              <Link href="/reports" prefetch={false}>
+                Preview board pack
+              </Link>
             </Button>
           </div>
           <div className="mt-8 grid gap-5 sm:grid-cols-3">
@@ -77,7 +82,10 @@ export default function DashboardPage() {
         </Card>
       </section>
 
-      <section className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4 text-text">
+      <section
+        className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4 text-text"
+        style={{ contentVisibility: "auto", containIntrinsicSize: "320px" }}
+      >
         <StatCard title="Cycle time" value="4m 12s" description="Avg workflow" delta={{ label: "-63% vs manual", positive: true }} />
         <StatCard title="Traceable metrics" value="312" description="Active citations" icon={<Database className="h-5 w-5" />} />
         <StatCard title="Filings queued" value="28" description="Across 10 issuers" icon={<FileStack className="h-5 w-5" />} />
@@ -89,7 +97,10 @@ export default function DashboardPage() {
         />
       </section>
 
-      <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-3 text-text">
+      <section
+        className="grid gap-6 md:grid-cols-2 xl:grid-cols-3 text-text"
+        style={{ contentVisibility: "auto", containIntrinsicSize: "420px" }}
+      >
         {insightCards.map((insight) => (
           <div key={insight.title} className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
             <SectionHeading as="p" className="text-lg font-medium text-text">

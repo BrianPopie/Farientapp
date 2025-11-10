@@ -1,9 +1,11 @@
 import Image from "next/image";
 import { LoginForm } from "@/components/LoginForm";
+import VideoBackground from "@/components/VideoBackground";
 
 export default function LoginPage() {
   return (
     <main className="relative flex min-h-screen w-screen items-center justify-center overflow-hidden bg-[#030712]">
+      <VideoBackground src="/animation.mp4" poster="/login-poster.jpg" className="absolute inset-0 h-full w-full" forceVideo />
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(79,70,229,0.25),_transparent_45%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,_rgba(15,23,42,0.85),_transparent_60%)]" />
