@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { fakeAuth } from "@/lib/fakeAuth";
 import { Button } from "@/components/ui/button";
@@ -22,8 +22,21 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  useEffect(() => {
+    console.log("[LoginForm] mounted – awaiting user input");
+  }, []);
+
+  useEffect(() => {
+    if (!loading) return;
+    const id = setTimeout(() => {
+      console.log("[LoginForm] still processing login after 2s – possible freeze in production");
+    }, 2000);
+    return () => clearTimeout(id);
+  }, [loading]);
+
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    console.log("[LoginForm] submit triggered", { emailMasked: email.replace(/(.).+(@.*)/, "$1***$2") });
     setErr(null);
     if (!emailRegex.test(email)) {
       setErr("Enter a valid email");
@@ -36,11 +49,14 @@ export function LoginForm() {
     setLoading(true);
     try {
       await fakeAuth.signIn(email, password);
+      console.log("[LoginForm] authentication mock succeeded, redirecting to /dashboard");
       router.push("/dashboard");
     } catch (error: unknown) {
       if (error instanceof Error) {
+        console.error("[LoginForm] authentication error", error);
         setErr(error.message);
       } else {
+        console.error("[LoginForm] unknown authentication error", error);
         setErr("Login failed");
       }
     } finally {
