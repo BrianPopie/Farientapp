@@ -55,7 +55,7 @@ function LoginContent() {
 
   return (
     <main className="relative flex min-h-screen w-screen items-center justify-center overflow-hidden">
-      <VideoBackground forceVideo className="absolute inset-0 h-full w-full" />
+      <VideoBackground poster="/login-poster.jpg" className="absolute inset-0 h-full w-full" />
       <div className="relative z-10 w-full max-w-sm rounded-2xl border border-white/20 bg-white/10 px-6 py-8 text-white shadow-2xl shadow-black/50 backdrop-blur-md ring-1 ring-white/20">
         <div className="flex flex-col items-center gap-2 text-center">
           <Image src="/brand.svg" alt="Farient logo" width={48} height={48} className="rounded-xl" priority />
