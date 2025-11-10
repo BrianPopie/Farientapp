@@ -35,13 +35,6 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  if (isAuthed && pathname === "/login") {
-    const dashboardUrl = new URL("/dashboard", request.url);
-    const response = NextResponse.redirect(dashboardUrl);
-    tempDebugHeaders.forEach((value, key) => response.headers.set(key, value));
-    return response;
-  }
-
   const response = NextResponse.next();
   tempDebugHeaders.forEach((value, key) => response.headers.set(key, value));
   return response;
