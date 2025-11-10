@@ -6,6 +6,8 @@ import { AppChrome } from "@/components/AppChrome";
 import { ThemeProvider } from "@/components/theme-provider";
 import ClientRuntimeListener from "@/app/(instrumentation)/client-runtime-listener";
 
+const SHOW_RUNTIME_LISTENER = process.env.NODE_ENV !== "production";
+
 export const metadata: Metadata = {
   title: "Farient AI Executive Compensation Intelligence",
   description: "AI-native platform for executive compensation, benchmarking, and governance workflows."
@@ -20,7 +22,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <AppChrome>{children}</AppChrome>
           </Suspense>
         </ThemeProvider>
-        <ClientRuntimeListener />
+        {SHOW_RUNTIME_LISTENER ? <ClientRuntimeListener /> : null}
       </body>
     </html>
   );
