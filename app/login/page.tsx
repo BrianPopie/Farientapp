@@ -1,6 +1,6 @@
 "use client";
 
-import { type FormEvent, useState } from "react";
+import { Suspense, type FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { fakeAuth } from "@/lib/fakeAuth";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,14 @@ const emailRegex = /^\S+@\S+\.\S+$/;
 const pinRegex = /^\d{6}$/;
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginContent />
+    </Suspense>
+  );
+}
+
+function LoginContent() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState<string | null>(null);

@@ -9,10 +9,10 @@ export default function GlobalError({
 }) {
   return (
     <html>
-      <body className="p-6 text-sm">
-        <h1 className="mb-2 text-lg font-semibold">App crashed</h1>
-        <pre className="whitespace-pre-wrap text-red-500">{error?.stack || error?.message}</pre>
-        <button onClick={() => reset()} className="mt-3 rounded border px-3 py-1">
+      <body style={{ padding: 16, fontFamily: "ui-sans-serif" }}>
+        <h1>App crashed</h1>
+        <pre style={{ whiteSpace: "pre-wrap" }}>{error?.stack || error?.message}</pre>
+        <button onClick={() => reset()} style={{ marginTop: 12, padding: "6px 12px" }}>
           Retry
         </button>
       </body>

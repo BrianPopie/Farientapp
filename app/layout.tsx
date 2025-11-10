@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import type { ReactNode } from "react";
 import "@/styles/globals.css";
 import { AppChrome } from "@/components/AppChrome";
@@ -15,7 +16,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" suppressHydrationWarning>
       <body className="flex w-full min-h-screen justify-center bg-bg text-text antialiased">
         <ThemeProvider>
-          <AppChrome>{children}</AppChrome>
+          <Suspense fallback={null}>
+            <AppChrome>{children}</AppChrome>
+          </Suspense>
         </ThemeProvider>
         <ClientRuntimeListener />
       </body>

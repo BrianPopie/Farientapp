@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { Suspense, type ReactNode, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { fakeAuth } from "@/lib/fakeAuth";
 import { Sidebar } from "@/components/Sidebar";
@@ -62,7 +62,9 @@ export function AppChrome({ children }: AppChromeProps) {
           <>
             <div className="w-full">
               <div className="grid min-h-screen grid-cols-[240px_minmax(0,1fr)] bg-bg">
-                <Sidebar authed={authed} onSignOut={handleSignOut} />
+                <Suspense fallback={null}>
+                  <Sidebar authed={authed} onSignOut={handleSignOut} />
+                </Suspense>
                 <div className="flex flex-col">
                   <Nav />
                   <div className="flex-1">{children}</div>
