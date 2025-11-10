@@ -22,7 +22,10 @@ const UploadDropzone = dynamic(() => import("@/components/UploadDropzone").then(
   )
 });
 
-const files = [
+type FileCardData = React.ComponentProps<typeof FileCard>;
+type FileCardListItem = FileCardData & { viewKey: string };
+
+const files: FileCardData[] = [
   {
     title: "Aurelius Corp Proxy",
     source: "EDGAR" as const,
@@ -126,19 +129,25 @@ export default function FilingsPage() {
     setUploads((prev) => [file, ...prev]);
   };
 
-  const combinedFiles = React.useMemo(
-    () =>
-      [
-        ...uploads.map((upload) => ({
-          title: upload.name,
-          source: "Upload" as const,
-          filing: "PDF" as const,
-          year: new Date(upload.uploadedAt).getFullYear(),
-          status: "queued" as const,
-          citationCount: 0
-        })),
-        ...files
-      ].slice(0, 6),
+  const combinedFiles = React.useMemo<FileCardListItem[]>(
+    () => {
+      const uploadCards = uploads.map<FileCardListItem>((upload) => ({
+        viewKey: `upload-${upload.id}`,
+        title: upload.name,
+        source: "Upload" as const,
+        filing: "PDF" as const,
+        year: new Date(upload.uploadedAt).getFullYear(),
+        status: "queued" as const,
+        citationCount: 0
+      }));
+
+      const seededCards = files.map<FileCardListItem>((file) => ({
+        ...file,
+        viewKey: `seed-${file.title}-${file.year}`
+      }));
+
+      return [...uploadCards, ...seededCards].slice(0, 6);
+    },
     [uploads]
   );
 
@@ -158,8 +167,8 @@ export default function FilingsPage() {
         <div className="grid gap-4 sm:grid-cols-2">
           {loadingUploads && <p className="text-xs text-text-muted">Loading uploads…</p>}
           {uploadError && <p className="text-xs text-danger">{uploadError}</p>}
-          {combinedFiles.map((file) => (
-            <FileCard key={`${file.title}-${file.source}-${file.year}`} {...file} />
+          {combinedFiles.map(({ viewKey, ...file }) => (
+            <FileCard key={viewKey} {...file} />
           ))}
         </div>
       </section>

@@ -39,8 +39,28 @@ export function AppChrome({ children }: AppChromeProps) {
   useEffect(() => {
     const ok = fakeAuth.isAuthed();
     setAuthed(ok);
-    if (!ok && !loginRoute) {
-      router.replace("/login");
+    const redirectTarget = !ok && !loginRoute ? "/login" : null;
+    try {
+      const clientHeaders = {
+        location: typeof window !== "undefined" ? window.location.href : pathname,
+        cookie: typeof document !== "undefined" ? document.cookie : undefined,
+        userAgent: typeof navigator !== "undefined" ? navigator.userAgent : undefined
+      };
+      console.error(
+        "[AppChrome] session-check",
+        JSON.stringify({
+          pathname,
+          loginRoute,
+          hasSession: ok,
+          redirect: redirectTarget,
+          ...clientHeaders
+        })
+      );
+    } catch {
+      // ignore logging issues
+    }
+    if (redirectTarget && pathname !== redirectTarget) {
+      router.replace(redirectTarget);
     }
   }, [loginRoute, pathname, router]);
 
