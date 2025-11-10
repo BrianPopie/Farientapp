@@ -12,9 +12,32 @@ export function serializeSession(session: SessionPayload): string {
 
 export function parseSession(value: string | null | undefined): SessionPayload | null {
   if (!value) return null;
+  const candidates: string[] = [];
+
+  const safePush = (raw: string) => {
+    if (!candidates.includes(raw)) {
+      candidates.push(raw);
+    }
+  };
+
+  safePush(value);
   try {
-    return JSON.parse(decodeURIComponent(value)) as SessionPayload;
+    safePush(decodeURIComponent(value));
   } catch {
-    return null;
+    // ignore
   }
+  try {
+    safePush(decodeURIComponent(decodeURIComponent(value)));
+  } catch {
+    // ignore
+  }
+
+  for (const candidate of candidates) {
+    try {
+      return JSON.parse(candidate) as SessionPayload;
+    } catch {
+      // continue
+    }
+  }
+  return null;
 }

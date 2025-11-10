@@ -35,34 +35,36 @@ export function AppChrome({ children }: AppChromeProps) {
   const pathname = usePathname();
   const router = useRouter();
   const loginRoute = pathname === "/login" || pathname === "/";
+  const shouldLogSessionCheck = process.env.NODE_ENV === "development";
 
   useEffect(() => {
     const ok = fakeAuth.isAuthed();
     setAuthed(ok);
     const redirectTarget = !ok && !loginRoute ? "/login" : null;
-    try {
-      const clientHeaders = {
-        location: typeof window !== "undefined" ? window.location.href : pathname,
-        cookie: typeof document !== "undefined" ? document.cookie : undefined,
-        userAgent: typeof navigator !== "undefined" ? navigator.userAgent : undefined
-      };
-      console.error(
-        "[AppChrome] session-check",
-        JSON.stringify({
-          pathname,
-          loginRoute,
-          hasSession: ok,
-          redirect: redirectTarget,
-          ...clientHeaders
-        })
-      );
-    } catch {
-      // ignore logging issues
+    if (shouldLogSessionCheck) {
+      try {
+        const clientContext = {
+          location: typeof window !== "undefined" ? window.location.href : pathname,
+          userAgent: typeof navigator !== "undefined" ? navigator.userAgent : undefined
+        };
+        console.debug(
+          "[AppChrome] session-check",
+          JSON.stringify({
+            pathname,
+            loginRoute,
+            hasSession: ok,
+            redirect: redirectTarget,
+            ...clientContext
+          })
+        );
+      } catch {
+        // ignore logging issues
+      }
     }
     if (redirectTarget && pathname !== redirectTarget) {
       router.replace(redirectTarget);
     }
-  }, [loginRoute, pathname, router]);
+  }, [loginRoute, pathname, router, shouldLogSessionCheck]);
 
   const focusValue = useMemo(
     () => ({
