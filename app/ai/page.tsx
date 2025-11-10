@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 import { ROLE_BANDS } from "@/lib/roles";
 import { ProtectedRouteBoundary } from "@/components/ProtectedRouteBoundary";
+import { AppChrome } from "@/components/AppChrome";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -22,18 +23,23 @@ const peerUniverse = peersData as PeerRuleInput[];
 export default function AiPage() {
   return (
     <ProtectedRouteBoundary>
-      <main className="flex justify-center px-8 py-10 text-text">
-        <div className="w-full max-w-[1500px] space-y-6">
-          <header className="space-y-2">
-            <p className="text-xs uppercase tracking-[0.3em] text-text-muted">Copilot</p>
-            <h1 className="text-3xl font-semibold">Role-aware Farient AI</h1>
-            <p className="text-sm text-text-muted">
-              Pick the non-CEO role band you care about, feed in a company, and keep the insights cited. All answers stay mock-only.
-            </p>
-          </header>
-          <RoleAwareChat />
-        </div>
-      </main>
+      <Suspense fallback={null}>
+        <AppChrome>
+          <main className="flex justify-center px-8 py-10 text-text">
+            <div className="w-full max-w-[1500px] space-y-6">
+              <header className="space-y-2">
+                <p className="text-xs uppercase tracking-[0.3em] text-text-muted">Copilot</p>
+                <h1 className="text-3xl font-semibold">Role-aware Farient AI</h1>
+                <p className="text-sm text-text-muted">
+                  Pick the non-CEO role band you care about, feed in a company, and ask any question to procure insights around
+                  compensation—with citations baked in.
+                </p>
+              </header>
+              <RoleAwareChat />
+            </div>
+          </main>
+        </AppChrome>
+      </Suspense>
     </ProtectedRouteBoundary>
   );
 }
@@ -147,7 +153,11 @@ function RoleAwareChat() {
 
       <section className="flex flex-col">
         <Card className="flex-1 space-y-4 p-4">
-          {messages.length === 0 && <p className="text-sm text-text-muted">Ask about any role to see insights.</p>}
+          {messages.length === 0 && (
+            <p className="text-sm text-text-muted">
+              Ask any question to procure insights around any compensation related question!
+            </p>
+          )}
           {messages.map((message, index) => {
             const { body, guidance } = splitGuidance(message.content);
             const display = message.role === "assistant" ? body : message.content;
