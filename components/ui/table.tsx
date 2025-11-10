@@ -21,7 +21,7 @@ const TableBody = ({ className, ...props }: React.HTMLAttributes<HTMLTableSectio
 );
 
 const TableFooter = ({ className, ...props }: React.HTMLAttributes<HTMLTableSectionElement>) => (
-  <tfoot className={cn("bg-muted/50 font-semibold text-foreground", className)} {...props} />
+  <tfoot className={cn("bg-muted/50 font-semibold text-text", className)} {...props} />
 );
 
 const TableRow = ({ className, ...props }: React.HTMLAttributes<HTMLTableRowElement>) => (
@@ -30,20 +30,17 @@ const TableRow = ({ className, ...props }: React.HTMLAttributes<HTMLTableRowElem
 
 const TableHead = ({ className, ...props }: React.ThHTMLAttributes<HTMLTableCellElement>) => (
   <th
-    className={cn(
-      "px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground",
-      className
-    )}
+    className={cn("px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-text-muted", className)}
     {...props}
   />
 );
 
 const TableCell = ({ className, ...props }: React.TdHTMLAttributes<HTMLTableCellElement>) => (
-  <td className={cn("px-4 py-3 align-middle text-sm text-foreground/90", className)} {...props} />
+  <td className={cn("px-4 py-3 align-middle text-sm text-text", className)} {...props} />
 );
 
 const TableCaption = ({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) => (
-  <caption className={cn("mt-4 text-sm text-muted-foreground", className)} {...props} />
+  <caption className={cn("mt-4 text-sm text-text-muted", className)} {...props} />
 );
 
 export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption };

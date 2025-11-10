@@ -18,7 +18,7 @@ export function MeasuredChart({
   children
 }: MeasuredChartProps) {
   const { ref, width, height, ready } = useSize<HTMLDivElement>();
-  const containerClass = cn("relative w-full min-w-0 min-h-0", heightClass, className);
+  const containerClass = cn("relative w-full min-w-0 min-h-[280px]", heightClass, className);
 
   if (!isVisible) {
     return <div className={containerClass} />;
@@ -26,14 +26,13 @@ export function MeasuredChart({
 
   const canRender = ready && width > 0 && height > 0;
 
-
   return (
     <div ref={ref} className={containerClass}>
       {canRender ? (
         children({ width, height })
       ) : (
-        <div className="flex h-full w-full items-center justify-center rounded-xl border border-border bg-card">
-          <div className="h-1/2 w-3/4 animate-pulse rounded-xl bg-muted" aria-hidden="true" />
+        <div className="flex h-full w-full items-center justify-center rounded-2xl border border-border bg-surface text-text-muted">
+          <span className="chart-empty">Loading chart...</span>
         </div>
       )}
     </div>

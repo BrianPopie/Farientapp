@@ -37,25 +37,25 @@ export function AiInsightPanel({
   };
 
   return (
-    <Card className={cn("flex h-full flex-col bg-card/90", className)}>
+    <Card className={cn("flex h-full flex-col bg-surface/95 text-text shadow-sm", className)}>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-primary" />
+          <Sparkles className="h-4 w-4 text-accent" />
           {title}
         </CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col gap-4">
-        <div className="min-h-[130px] rounded-2xl border border-dashed border-border/60 bg-background/70 p-4 text-sm text-foreground">
+        <div className="min-h-[130px] rounded-2xl border border-dashed border-border bg-muted/40 p-4 text-sm">
           {streaming ? (
-            <p className="flex items-center gap-2 text-muted-foreground">
+            <p className="flex items-center gap-2 text-text-muted">
               <Loader2 className="h-4 w-4 animate-spin" />
-              Generating insight...
+              Generating insight
             </p>
           ) : latestAssistant ? (
-            <p className="leading-relaxed">{latestAssistant}</p>
+            <p className="leading-relaxed text-text">{latestAssistant}</p>
           ) : (
-            <p className="text-muted-foreground">Ask a question below to generate an AI insight.</p>
+            <p className="text-text-muted">Ask a question below to generate an AI insight.</p>
           )}
         </div>
         <Textarea
@@ -84,4 +84,4 @@ export function AiInsightPanel({
       </CardContent>
     </Card>
   );
-}
+}

@@ -12,7 +12,7 @@ export function ThemeToggle() {
       size="icon"
       aria-label="Toggle theme"
       onClick={() => setTheme(next)}
-      className="text-foreground"
+      className="text-text"
     >
       <Sun className="hidden dark:inline h-5 w-5" />
       <Moon className="inline dark:hidden h-5 w-5" />

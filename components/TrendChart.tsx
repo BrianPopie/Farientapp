@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useTheme } from "next-themes";
-import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from "recharts";
+import { useMemo } from "react";
+import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ResponsiveContainer } from "recharts";
 import { TrendPoint } from "@/lib/types";
 import { formatUSD } from "@/lib/utils";
 import { MeasuredChart } from "@/components/MeasuredChart";
+import { axisStyles, gridStyles, strokeWidth, getSeriesColor, getTooltipTheme } from "@/components/ui/chart-theme";
 
 type TrendChartProps = {
   data: TrendPoint[];
@@ -14,68 +14,37 @@ type TrendChartProps = {
   className?: string;
 };
 
+type TooltipDatum = {
+  value: number;
+  dataKey?: string;
+  name?: string;
+};
+
 type CustomTooltipProps = {
   active?: boolean;
-  payload?: Array<{ value: number }>;
+  payload?: TooltipDatum[];
   label?: string;
 };
 
-type ChartPalette = {
-  axis: string;
-  grid: string;
-  chart1: string;
-  chart2: string;
-  tooltipBg: string;
-  tooltipText: string;
-};
-
-const defaultPalette: ChartPalette = {
-  axis: "rgb(148 163 184)",
-  grid: "rgba(255,255,255,0.06)",
-  chart1: "rgb(56,189,248)",
-  chart2: "rgb(34,197,94)",
-  tooltipBg: "rgb(16,33,70)",
-  tooltipText: "rgb(230,240,255)"
-};
-
-const withAlpha = (color: string, alpha: number) => {
-  if (color.startsWith("rgba")) return color;
-  if (color.startsWith("rgb")) {
-    return color.replace("rgb", "rgba").replace(")", `,${alpha})`);
-  }
-  return color;
-};
-
-const readColor = (token: string, alpha = 1, fallback = defaultPalette.axis) => {
-  if (typeof window === "undefined") return alpha === 1 ? fallback : withAlpha(fallback, alpha);
-  const raw = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
-  if (!raw) return alpha === 1 ? fallback : withAlpha(fallback, alpha);
-  return alpha === 1 ? `rgb(${raw})` : `rgba(${raw},${alpha})`;
-};
-
-const getPalette = (): ChartPalette => ({
-  axis: readColor("--muted-foreground", 1, defaultPalette.axis),
-  grid: defaultPalette.grid,
-  chart1: readColor("--chart-1", 1, defaultPalette.chart1),
-  chart2: readColor("--chart-2", 1, defaultPalette.chart2),
-  tooltipBg: readColor("--card", 1, defaultPalette.tooltipBg),
-  tooltipText: readColor("--card-foreground", 1, defaultPalette.tooltipText)
-});
-
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (!active || !payload?.length) return null;
-  const tsrPoint = payload[0];
-  const compPoint = payload[1];
+  const tsrPoint = payload.find((point) => point.dataKey === "tsrPct");
+  const compPoint = payload.find((point) => point.dataKey === "compUSD");
+  const theme = getTooltipTheme();
+
   return (
-    <div className="rounded-2xl border border-border bg-card/95 px-4 py-3 text-sm shadow-lg">
-      <p className="text-xs uppercase tracking-wide text-muted-foreground">{label}</p>
+    <div
+      className="rounded-2xl border px-4 py-3 text-sm shadow-lg"
+      style={{ background: theme.background, borderColor: theme.border, color: theme.color }}
+    >
+      <p className="text-[0.75rem] uppercase tracking-wide text-text-muted">{label}</p>
       {tsrPoint && (
-        <p className="text-chart-2">
+        <p className="mt-1 text-text">
           TSR: <span className="font-semibold">{Number(tsrPoint.value)}%</span>
         </p>
       )}
       {compPoint && (
-        <p className="text-chart-1">
+        <p className="text-text">
           CEO Pay: <span className="font-semibold">{formatUSD(Number(compPoint.value))}</span>
         </p>
       )}
@@ -83,35 +52,90 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   );
 };
 
-export function TrendChart({ data, isVisible = true, heightClass = "h-[300px]", className }: TrendChartProps) {
-  const { resolvedTheme } = useTheme();
-  const [palette, setPalette] = useState<ChartPalette>(() => getPalette());
+type LegendEntry = {
+  value?: string | number;
+  color?: string;
+};
 
-  useEffect(() => {
-    setPalette(getPalette());
-  }, [resolvedTheme]);
+type LegendContentProps = {
+  payload?: LegendEntry[];
+};
+
+const LegendContent = ({ payload = [] }: LegendContentProps) => {
+  if (!payload.length) return null;
+
+  return (
+    <ul className="mt-3 flex flex-wrap gap-3" role="list">
+      {payload.map((entry, index) => (
+        <li key={`${entry?.value ?? index}`}>
+          <button
+            type="button"
+            className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-1 text-xs font-semibold text-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--bg))]"
+          >
+            <span
+              className="h-2.5 w-2.5 rounded-full"
+              style={{ backgroundColor: entry?.color ?? getSeriesColor(0) }}
+              aria-hidden="true"
+            />
+            {entry?.value ?? `Series ${index + 1}`}
+          </button>
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+export function TrendChart({ data, isVisible = true, heightClass = "h-[320px]", className }: TrendChartProps) {
+  const chartData = useMemo(() => data ?? [], [data]);
+  const emptyState = chartData.length === 0;
 
   return (
     <MeasuredChart isVisible={isVisible} heightClass={heightClass} className={className}>
-      {({ width, height }) => (
-        <LineChart width={width} height={height} data={data}>
-          <CartesianGrid stroke={palette.grid} strokeDasharray="4 4" />
-          <XAxis dataKey="year" tick={{ fill: palette.axis }} axisLine={false} tickLine={false} />
-          <YAxis yAxisId="left" tick={{ fill: palette.axis }} axisLine={false} tickLine={false} unit="%" />
-          <YAxis
-            orientation="right"
-            yAxisId="right"
-            tick={{ fill: palette.axis }}
-            axisLine={false}
-            tickLine={false}
-            tickFormatter={(value) => `${value / 1_000_000}M`}
-          />
-          <Tooltip content={<CustomTooltip />} />
-          <Legend />
-          <Line yAxisId="left" type="monotone" dataKey="tsrPct" stroke={palette.chart2} strokeWidth={3} dot={{ r: 5 }} name="TSR %" />
-          <Line yAxisId="right" type="monotone" dataKey="compUSD" stroke={palette.chart1} strokeWidth={3} dot={{ r: 5 }} name="CEO Pay" />
-        </LineChart>
-      )}
+      {({ width, height }) =>
+        emptyState ? (
+          <div className="flex h-full items-center justify-center rounded-2xl border border-border bg-surface">
+            <p className="chart-empty">No data available</p>
+          </div>
+        ) : (
+          <ResponsiveContainer width={width} height={height}>
+            <LineChart data={chartData} aria-label="Trend chart showing TSR versus CEO compensation">
+              <CartesianGrid {...gridStyles} />
+              <XAxis dataKey="year" tick={axisStyles.tick} axisLine={false} tickLine={false} />
+              <YAxis yAxisId="left" tick={axisStyles.tick} axisLine={false} tickLine={false} unit="%" />
+              <YAxis
+                orientation="right"
+                yAxisId="right"
+                tick={axisStyles.tick}
+                axisLine={false}
+                tickLine={false}
+                tickFormatter={(value) => `${value / 1_000_000}M`}
+              />
+              <Tooltip content={<CustomTooltip />} cursor={{ stroke: "hsla(var(--text-muted) / 0.2)" }} />
+              <Legend content={<LegendContent />} />
+              <Line
+                yAxisId="left"
+                type="monotone"
+                dataKey="tsrPct"
+                name="TSR %"
+                stroke={getSeriesColor(0)}
+                strokeWidth={strokeWidth}
+                activeDot={{ r: 5 }}
+                dot={{ r: 4, strokeWidth: 1.5, stroke: "hsl(var(--bg))" }}
+              />
+              <Line
+                yAxisId="right"
+                type="monotone"
+                dataKey="compUSD"
+                name="CEO Pay"
+                stroke={getSeriesColor(1)}
+                strokeWidth={strokeWidth}
+                activeDot={{ r: 5 }}
+                dot={{ r: 4, strokeWidth: 1.5, stroke: "hsl(var(--bg))" }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        )
+      }
     </MeasuredChart>
   );
 }

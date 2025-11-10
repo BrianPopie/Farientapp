@@ -16,10 +16,10 @@ export function PeerBuilder() {
   const { baseCompanyId, filters, peerSet, setBaseCompany, setFilters } = usePeerStore();
 
   return (
-    <div className="rounded-3xl border border-border bg-card p-6">
+    <div className="rounded-3xl border border-border bg-surface p-6 shadow-sm">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-xs uppercase tracking-wide text-muted-foreground">Base company</p>
+          <p className="text-[0.75rem] uppercase tracking-wide text-text-muted">Base company</p>
           <Select value={baseCompanyId} onValueChange={setBaseCompany}>
             <SelectTrigger className="mt-1 w-full sm:w-72">
               <SelectValue placeholder="Select company" />
@@ -33,7 +33,7 @@ export function PeerBuilder() {
             </SelectContent>
           </Select>
         </div>
-        <Button variant="ghost" className="gap-2" type="button" onClick={() => setFilters({ sector: "Technology" })}>
+        <Button variant="ghost" className="gap-2 text-text" type="button" onClick={() => setFilters({ sector: "Technology" })}>
           <Shuffle className="h-4 w-4" />
           Rebuild peers
         </Button>
@@ -43,7 +43,7 @@ export function PeerBuilder() {
         <Select value={filters.sector} onValueChange={(value) => setFilters({ sector: value })}>
           <SelectTrigger>
             <div className="text-left">
-              <p className="text-xs uppercase text-muted-foreground">Sector</p>
+              <p className="text-[0.75rem] uppercase text-text-muted">Sector</p>
               <SelectValue placeholder="Select sector" />
             </div>
           </SelectTrigger>
@@ -59,7 +59,7 @@ export function PeerBuilder() {
         <Select value={filters.revenueBand} onValueChange={(value) => setFilters({ revenueBand: value })}>
           <SelectTrigger>
             <div className="text-left">
-              <p className="text-xs uppercase text-muted-foreground">Revenue band</p>
+              <p className="text-[0.75rem] uppercase text-text-muted">Revenue band</p>
               <SelectValue placeholder="Select band" />
             </div>
           </SelectTrigger>
@@ -75,7 +75,7 @@ export function PeerBuilder() {
         <Select value={filters.marketCap} onValueChange={(value) => setFilters({ marketCap: value })}>
           <SelectTrigger>
             <div className="text-left">
-              <p className="text-xs uppercase text-muted-foreground">Market cap</p>
+              <p className="text-[0.75rem] uppercase text-text-muted">Market cap</p>
               <SelectValue placeholder="Select market cap" />
             </div>
           </SelectTrigger>
@@ -91,7 +91,7 @@ export function PeerBuilder() {
         <Select value={filters.region} onValueChange={(value) => setFilters({ region: value })}>
           <SelectTrigger>
             <div className="text-left">
-              <p className="text-xs uppercase text-muted-foreground">Region</p>
+              <p className="text-[0.75rem] uppercase text-text-muted">Region</p>
               <SelectValue placeholder="Select region" />
             </div>
           </SelectTrigger>
@@ -106,10 +106,10 @@ export function PeerBuilder() {
       </div>
 
       <div className="mt-6">
-        <p className="text-xs uppercase tracking-wide text-muted-foreground">Selected peers</p>
+        <p className="text-xs uppercase tracking-wide text-text-muted">Selected peers</p>
         <div className="mt-3 flex flex-wrap gap-2">
           {peerSet.map((peer) => (
-            <Badge key={peer} variant="outline" className="border-border bg-card">
+            <Badge key={peer} variant="outline" className="border-border bg-surface">
               {peer}
             </Badge>
           ))}

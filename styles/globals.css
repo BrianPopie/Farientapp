@@ -2,93 +2,209 @@
 @tailwind components;
 @tailwind utilities;
 
-/* === Semantic color tokens === */
 @layer base {
   :root {
-    /* Light */
-    --background: 246 247 252;
-    --foreground: 17 24 39;
-    --card: 255 255 255;
-    --card-foreground: 17 24 39;
-    --muted: 241 245 249;
-    --muted-foreground: 100 116 139;
-    --border: 226 232 240;
-    --primary: 56 189 248;
-    --primary-foreground: 3 7 18;
-    --success: 52 211 153;
-    --warning: 245 158 11;
-    --danger: 239 68 68;
-    --chart-1: 56 189 248;
-    --chart-2: 52 211 153;
-    --chart-3: 245 158 11;
-    --radius: 16px;
+    color-scheme: dark;
+    --radius: 18px;
+    --bg: 222 20% 8%;
+    --surface: 222 16% 12%;
+    --muted: 220 12% 18%;
+    --border: 214 20% 26%;
+    --ring: 213 94% 68%;
+    --text: 210 40% 98%;
+    --text-muted: 214 15% 75%;
+    --accent: 217 92% 60%;
+    --accent-foreground: 210 40% 98%;
+    --success: 160 84% 40%;
+    --warning: 43 96% 56%;
+    --danger: 2 90% 60%;
   }
 
-  .dark {
-    /* Graphite dashboard theme */
-    --background: 10 14 20;
-    --foreground: 214 226 240;
-    --card: 16 22 32;
-    --card-foreground: 214 226 240;
-    --muted: 21 28 40;
-    --muted-foreground: 142 160 180;
-    --border: 32 45 64;
-    --primary: 59 130 246;
-    --primary-foreground: 3 7 18;
-    --success: 34 197 94;
-    --warning: 245 158 11;
-    --danger: 248 113 113;
-    --chart-1: 59 130 246;
-    --chart-2: 34 197 94;
-    --chart-3: 251 191 36;
+  :root:not(.dark) {
+    color-scheme: light;
+    --bg: 0 0% 100%;
+    --surface: 220 14% 97%;
+    --muted: 220 10% 92%;
+    --border: 220 12% 85%;
+    --ring: 224 76% 48%;
+    --text: 222 47% 11%;
+    --text-muted: 220 16% 33%;
+    --accent: 224 88% 50%;
+    --accent-foreground: 0 0% 100%;
+    --success: 151 55% 34%;
+    --warning: 34 94% 40%;
+    --danger: 3 74% 38%;
+  }
+
+  [data-contrast="high"] {
+    --border: 220 14% 70%;
+    --text-muted: 215 18% 80%;
+  }
+
+  [data-contrast="high"]:not(.dark) {
+    --border: 220 12% 68%;
+    --text-muted: 218 12% 32%;
   }
 
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
 
   body {
-    @apply min-h-screen bg-background text-foreground antialiased font-sans;
+    min-height: 100vh;
+    background-color: hsl(var(--bg));
+    color: hsl(var(--text));
+    font-family: var(--font-sans, "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    font-size: clamp(0.95rem, 0.28vw + 0.86rem, 1rem);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: hsla(var(--accent) / 0.35);
+    color: hsl(var(--accent-foreground));
+  }
+
+  :where(a, button, [role="button"]) {
+    border-radius: 999px;
+    outline: none;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  :where(a, button, [role="button"]):focus-visible {
+    box-shadow: 0 0 0 2px hsl(var(--ring));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
-.glass-panel {
-  @apply rounded-xl border border-border bg-card/95 backdrop-blur;
-}
-
-.scroll-gradient {
-  mask-image: linear-gradient(180deg, transparent, rgb(0 0 0 / 1) 20%, rgb(0 0 0 / 1) 80%, transparent);
-}
-
-:where(a, button, [role="button"]) {
-  @apply rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background;
-}
-
 @layer components {
+  .glass-panel {
+    border-radius: var(--radius);
+    border: 1px solid hsl(var(--border));
+    background: hsla(var(--surface) / 0.92);
+    backdrop-filter: blur(16px);
+  }
+
+  .scroll-gradient {
+    mask-image: linear-gradient(180deg, transparent, rgb(0 0 0 / 1) 20%, rgb(0 0 0 / 1) 80%, transparent);
+  }
+
   .dashboard-grid {
     container-type: inline-size;
   }
 
-  .dashboard-grid .bg-card {
-    @apply transition-all duration-300;
+  .dashboard-grid .bg-surface {
+    transition: padding 300ms ease, color 300ms ease;
   }
 
   @container (min-width: 1200px) {
-    .dashboard-grid .bg-card {
-      @apply p-10 text-[15px];
+    .dashboard-grid .bg-surface {
+      padding: 2.75rem;
+      font-size: 0.97rem;
     }
   }
 
   .dashboard-grid .recharts-wrapper {
-    min-height: 360px !important;
+    min-height: 320px !important;
+  }
+
+  .bento-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: hsl(var(--surface));
+    color: hsl(var(--text));
+    border: 1px solid hsla(var(--border) / 0.9);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.02),
+      0 10px 32px rgba(0, 0, 0, 0.45);
+    transition:
+      border-color 300ms ease,
+      box-shadow 300ms ease,
+      transform 300ms ease;
+    backdrop-filter: saturate(140%) blur(10px);
+  }
+
+  .bento-card::before,
+  .bento-card::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: 0;
+    transition: opacity 320ms ease;
+    pointer-events: none;
+  }
+
+  .bento-card::before {
+    background:
+      radial-gradient(circle at 20% 20%, hsla(var(--accent) / 0.18), transparent 55%),
+      radial-gradient(circle at 70% 0%, hsla(var(--success) / 0.16), transparent 45%),
+      radial-gradient(circle at 50% 100%, hsla(var(--warning) / 0.12), transparent 50%);
+    opacity: 0.55;
+  }
+
+  .bento-card::after {
+    background:
+      linear-gradient(120deg, rgba(255, 255, 255, 0.08), transparent 55%),
+      linear-gradient(0deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0));
+    mix-blend-mode: screen;
+    opacity: 0.35;
+  }
+
+  .bento-card:hover {
+    transform: translateY(-2px);
+    border-color: hsla(var(--accent) / 0.45);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.04),
+      0 18px 48px rgba(0, 0, 0, 0.45);
+  }
+
+  .bento-card:hover::before {
+    opacity: 0.9;
+  }
+
+  .bento-card--glow {
+    border-color: hsla(var(--accent) / 0.6);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 22px 52px rgba(17, 24, 39, 0.55),
+      0 0 90px hsla(var(--accent) / 0.18);
+  }
+
+  .bento-card--glow::before {
+    background:
+      radial-gradient(circle at 15% 15%, hsla(var(--accent) / 0.32), transparent 55%),
+      radial-gradient(circle at 70% 0%, hsla(var(--success) / 0.18), transparent 45%),
+      radial-gradient(circle at 45% 90%, hsla(var(--warning) / 0.18), transparent 55%);
+    opacity: 0.95;
+  }
+
+  .bento-card > * {
+    position: relative;
+    z-index: 1;
   }
 }
 
 @layer utilities {
   .card-glow {
     box-shadow:
-      0 0 0 1px rgba(255, 255, 255, 0.03) inset,
-      0 12px 36px rgba(0, 0, 0, 0.4),
-      0 0 60px rgba(56, 189, 248, 0.05);
+      inset 0 1px 0 rgba(255, 255, 255, 0.03),
+      0 14px 42px rgba(0, 0, 0, 0.45),
+      0 0 60px hsla(var(--accent) / 0.08);
+  }
+
+  .chart-empty {
+    color: hsl(var(--text-muted));
+    font-size: 0.95rem;
+    font-weight: 500;
   }
 }

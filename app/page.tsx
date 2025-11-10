@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendPoint } from "@/lib/types";
 import { DataBadge } from "@/components/DataBadge";
 import { fakeAuth } from "@/lib/fakeAuth";
+import { PageHeading, BodyText, SectionHeading } from "@/components/ui/typography";
 
 const heroTrend: TrendPoint[] = [
   { year: 2020, tsrPct: -3, compUSD: 8400000 },
@@ -44,24 +45,24 @@ export default function OverviewPage() {
   }
 
   return (
-    <main className="flex justify-center px-8 py-10">
+    <main className="flex justify-center px-6 py-10 text-text">
       <div className="dashboard-grid w-full max-w-[1500px] space-y-10">
         <section className="grid gap-8 xl:grid-cols-[2fr_1.2fr]">
-          <div className="rounded-2xl bg-card ring-1 ring-border p-8 card-glow shadow-xl">
+          <div className="rounded-2xl border border-border bg-surface p-8 shadow-sm">
             <DataBadge tone="info">Executive Compensation Intelligence</DataBadge>
-            <h1 className="mt-4 text-2xl font-semibold leading-tight text-foreground xl:text-3xl">Deal Intelligence Dashboard</h1>
-            <p className="mt-3 text-base text-muted-foreground xl:text-lg">
+            <PageHeading className="mt-4 text-text">Deal Intelligence Dashboard</PageHeading>
+            <BodyText muted className="mt-3 text-base xl:text-lg">
               Farient transforms DEF 14As, 10-K/Qs, and policy packs into structured insights so analysts can defend every metric in front
               of the board.
-            </p>
+            </BodyText>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Button asChild className="gap-2 text-sm xl:text-base">
+              <Button asChild className="gap-2 text-base">
                 <Link href="/filings">
                   Launch ingestion
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
-              <Button variant="ghost" asChild className="text-sm text-muted-foreground hover:text-foreground xl:text-base">
+              <Button variant="ghost" asChild className="text-base text-text-muted hover:text-text">
                 <Link href="/reports">Preview board pack</Link>
               </Button>
             </div>
@@ -71,17 +72,17 @@ export default function OverviewPage() {
                 { label: "Extraction accuracy", value: "98.4%" },
                 { label: "Analyst NPS", value: "+54" }
               ].map((item) => (
-                <div key={item.label} className="rounded-xl border border-border/70 bg-muted/40 p-4 text-center">
-                  <p className="text-xs uppercase tracking-wide text-muted-foreground">{item.label}</p>
-                  <p className="text-2xl font-semibold text-foreground">{item.value}</p>
+                <div key={item.label} className="rounded-xl border border-border bg-muted/50 p-4 text-center">
+                  <p className="text-xs uppercase tracking-wide text-text-muted">{item.label}</p>
+                  <p className="text-2xl font-semibold text-text">{item.value}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          <Card className="rounded-2xl bg-card ring-1 ring-border card-glow">
+          <Card className="rounded-2xl border border-border bg-surface shadow-sm">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold xl:text-xl">TSR vs CEO Total Comp</CardTitle>
+              <CardTitle className="text-xl font-semibold text-text">TSR vs CEO Total Comp</CardTitle>
             </CardHeader>
             <CardContent className="min-w-0 min-h-0">
               <TrendChart data={heroTrend} />
@@ -98,9 +99,13 @@ export default function OverviewPage() {
 
         <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {insightCards.map((insight) => (
-            <div key={insight.title} className="rounded-2xl bg-card ring-1 ring-border p-6 card-glow">
-              <p className="text-lg font-medium text-foreground">{insight.title}</p>
-              <p className="mt-2 text-sm text-muted-foreground">{insight.detail}</p>
+            <div key={insight.title} className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
+              <SectionHeading as="p" className="text-lg font-medium text-text">
+                {insight.title}
+              </SectionHeading>
+              <BodyText muted className="mt-2 text-sm">
+                {insight.detail}
+              </BodyText>
             </div>
           ))}
         </section>

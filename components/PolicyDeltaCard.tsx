@@ -11,13 +11,13 @@ export function PolicyDeltaCard({ delta }: PolicyDeltaCardProps) {
     <Card>
       <CardContent className="space-y-3 p-5">
         <div className="flex items-center justify-between">
-          <p className="text-sm font-semibold">{delta.section}</p>
+          <p className="text-sm font-semibold text-text">{delta.section}</p>
           <Badge variant="outline">
-            {delta.yearFrom} → {delta.yearTo}
+            {delta.yearFrom} ? {delta.yearTo}
           </Badge>
         </div>
-        <p className="text-xs uppercase tracking-wide text-muted-foreground">{delta.firm}</p>
-        <p className="text-sm text-muted-foreground">{delta.changeSummary}</p>
+        <p className="text-xs uppercase tracking-wide text-text-muted">{delta.firm}</p>
+        <p className="text-sm text-text-muted">{delta.changeSummary}</p>
       </CardContent>
     </Card>
   );

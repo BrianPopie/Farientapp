@@ -10,6 +10,7 @@ import citations from "@/data/citations.json";
 import { Badge } from "@/components/ui/badge";
 import type { Citation } from "@/lib/types";
 import { AiInsightPanel } from "@/components/AiInsightPanel";
+import { PageHeading, BodyText } from "@/components/ui/typography";
 
 const files = [
   {
@@ -89,12 +90,12 @@ export default function FilingsPage() {
   return (
     <div className="space-y-10">
       <div className="flex flex-col gap-2">
-        <p className="text-xs uppercase tracking-wide text-muted-foreground">Capability 01</p>
-        <h1 className="text-3xl font-semibold">Filing ingestion & parsing engine</h1>
-        <p className="text-muted-foreground">
+        <p className="text-[0.75rem] uppercase tracking-wide text-text-muted">Capability 01</p>
+        <PageHeading>Filing ingestion & parsing engine</PageHeading>
+        <BodyText muted>
           Simulated ingestion showing queue status, table previews, and citation provenance. Replace mocks with the real queue events when
           wiring to EDGAR or vendor APIs.
-        </p>
+        </BodyText>
       </div>
 
       <section className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
@@ -106,10 +107,10 @@ export default function FilingsPage() {
         </div>
       </section>
 
-      <section className="rounded-3xl border border-border bg-card p-6">
+      <section className="rounded-3xl border border-border bg-surface p-6">
         <p className="text-sm font-semibold">Pipeline status</p>
         <Stepper steps={stepperData} />
-        <div className="mt-6 flex flex-wrap gap-3 text-sm text-muted-foreground">
+        <div className="mt-6 flex flex-wrap gap-3 text-sm text-text-muted">
           <span>Last refresh: 2 minutes ago</span>
           <span>Confidence: 98.4%</span>
           <span>OCR fallback engaged for 1 filing</span>
@@ -177,7 +178,7 @@ export default function FilingsPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="text-xs uppercase text-muted-foreground">Tickers & CIKs</p>
+              <p className="text-xs uppercase text-text-muted">Tickers & CIKs</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {entityNormalization.tickers.map((entry) => (
                   <Badge key={entry.label} variant={entry.status === "resolved" ? "success" : "warning"}>
@@ -187,7 +188,7 @@ export default function FilingsPage() {
               </div>
             </div>
             <div>
-              <p className="text-xs uppercase text-muted-foreground">Exec names</p>
+              <p className="text-xs uppercase text-text-muted">Exec names</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {entityNormalization.executives.map((entry) => (
                   <Badge key={entry.label} variant={entry.status === "resolved" ? "success" : "warning"}>
@@ -197,7 +198,7 @@ export default function FilingsPage() {
               </div>
             </div>
             <div>
-              <p className="text-xs uppercase text-muted-foreground">Grant labels</p>
+              <p className="text-xs uppercase text-text-muted">Grant labels</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {entityNormalization.grants.map((entry) => (
                   <Badge key={entry.label} variant={entry.status === "resolved" ? "success" : "warning"}>
@@ -213,7 +214,7 @@ export default function FilingsPage() {
             <CardTitle>Provenance</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-1 flex-col justify-between">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-text-muted">
               Every table cell is stamped with `page:line`. Click a citation to open the right drawer preview - align with your document
               viewer or storage bucket later.
             </p>

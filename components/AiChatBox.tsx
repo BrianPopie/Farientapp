@@ -17,11 +17,11 @@ export default function AiChatBox({ systemPrompt = DEFAULT_PROMPT }: AiChatBoxPr
 
   return (
     <div className="grid gap-4">
-      <div className="h-[300px] overflow-y-auto rounded-lg border border-border bg-background/60 p-3 text-sm">
-        {messages.length === 0 && <p className="text-muted-foreground">Start the conversation...</p>}
+      <div className="h-[300px] overflow-y-auto rounded-2xl border border-border bg-surface/80 p-3 text-sm">
+        {messages.length === 0 && <p className="text-text-muted">Start the conversation...</p>}
         {messages.map((message, idx) => (
           <div key={`${message.role}-${idx}`} className="mb-2 leading-relaxed">
-            <span className="font-semibold">{message.role === "user" ? "You" : "AI"}: </span>
+            <span className="font-semibold text-text">{message.role === "user" ? "You" : "AI"}: </span>
             {message.content}
           </div>
         ))}

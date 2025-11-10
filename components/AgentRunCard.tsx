@@ -21,14 +21,14 @@ export function AgentRunCard({ run }: AgentRunCardProps) {
     <Card>
       <CardContent className="flex items-center justify-between gap-6 p-5">
         <div>
-          <p className="text-sm font-semibold">{run.id}</p>
-          <p className="text-xs text-muted-foreground">{new Date(run.runAt).toLocaleString()}</p>
+          <p className="text-sm font-semibold text-text">{run.id}</p>
+          <p className="text-xs text-text-muted">{new Date(run.runAt).toLocaleString()}</p>
           <div className="mt-3 flex items-center gap-3">
             <DataBadge tone={tone.tone}>{tone.label}</DataBadge>
-            <span className="text-xs text-muted-foreground">{run.steps.length} stages</span>
+            <span className="text-xs text-text-muted">{run.steps.length} stages</span>
           </div>
         </div>
-        <Button variant="ghost" size="icon" className="rounded-2xl" type="button">
+        <Button variant="ghost" size="icon" className="rounded-2xl text-text" type="button">
           <Play className="h-4 w-4" />
         </Button>
       </CardContent>

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="min-h-screen bg-background text-foreground antialiased flex justify-center w-full">
+      <body className="flex w-full min-h-screen justify-center bg-bg text-text antialiased">
         <ThemeProvider>
           <AppChrome>{children}</AppChrome>
         </ThemeProvider>

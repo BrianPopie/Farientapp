@@ -28,10 +28,7 @@ const DrawerContent = React.forwardRef<
     <DrawerOverlay />
     <DrawerPrimitive.Content
       ref={ref}
-      className={cn(
-        "fixed inset-y-0 right-0 z-50 flex w-full max-w-xl flex-col border-l border-border bg-background/95 backdrop-blur-xl",
-        className
-      )}
+      className={cn("fixed inset-y-0 right-0 z-50 flex w-full max-w-xl flex-col border-l border-border bg-surface/95 backdrop-blur-xl", className)}
       {...props}
     >
       <div className="flex flex-1 flex-col overflow-y-auto">{children}</div>
@@ -49,7 +46,7 @@ const DrawerTitle = ({ className, ...props }: React.HTMLAttributes<HTMLHeadingEl
 );
 
 const DrawerDescription = ({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) => (
-  <p className={cn("text-sm text-muted-foreground", className)} {...props} />
+  <p className={cn("text-sm text-text-muted", className)} {...props} />
 );
 
 const DrawerFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (

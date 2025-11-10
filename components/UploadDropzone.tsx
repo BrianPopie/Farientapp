@@ -29,13 +29,13 @@ export function UploadDropzone() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-border bg-card px-6 py-10 text-center">
-      <CloudUpload className="h-10 w-10 text-primary" />
-      <p className="mt-3 text-sm font-semibold">Upload Proxy or 10-K</p>
-      <p className="text-xs text-muted-foreground">Simulated ingestion using placeholder PDF</p>
+    <div className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-border bg-surface px-6 py-10 text-center shadow-sm">
+      <CloudUpload className="h-10 w-10 text-accent" aria-hidden="true" />
+      <p className="mt-3 text-base font-semibold text-text">Upload Proxy or 10-K</p>
+      <p className="text-sm text-text-muted">Simulated ingestion using placeholder PDF</p>
       {fileName && (
-        <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
-          {state === "parsing" ? <Loader2 className="h-4 w-4 animate-spin text-primary" /> : <ShieldCheck className="h-4 w-4 text-emerald-300" />}
+        <div className="mt-4 flex items-center gap-2 text-xs text-text-muted">
+          {state === "parsing" ? <Loader2 className="h-4 w-4 animate-spin text-accent" /> : <ShieldCheck className="h-4 w-4 text-success" />}
           {fileName}
         </div>
       )}

@@ -9,10 +9,10 @@ type AgentTimelineProps = {
 };
 
 const statusColor: Record<AgentRun["status"], string> = {
-  success: "bg-emerald-500/30 border-emerald-400/60",
-  running: "bg-amber-500/30 border-amber-400/60",
-  queued: "bg-slate-500/30 border-slate-400/60",
-  error: "bg-rose-500/30 border-rose-400/60"
+  success: "bg-success/20 border-success/60",
+  running: "bg-warning/20 border-warning/60",
+  queued: "bg-muted/60 border-border",
+  error: "bg-danger/20 border-danger/60"
 };
 
 export function AgentTimeline({ run }: AgentTimelineProps) {
@@ -31,24 +31,29 @@ export function AgentTimeline({ run }: AgentTimelineProps) {
             <div className="flex flex-col items-center">
               <span
                 className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-2xl border text-sm font-semibold",
-                  completed ? statusColor["success"] : statusColor[run.status]
+                  "flex h-10 w-10 items-center justify-center rounded-2xl border text-sm font-semibold text-text",
+                  completed ? statusColor.success : statusColor[run.status]
                 )}
               >
                 {index + 1}
               </span>
-              {index < run.steps.length - 1 && <span className="h-10 w-px bg-muted/70" />}
+              {index < run.steps.length - 1 && <span className="h-10 w-px bg-muted" aria-hidden="true" />}
             </div>
-            <div className="rounded-2xl border border-border bg-card p-4">
+            <div className="rounded-2xl border border-border bg-surface p-4 shadow-sm">
               <div className="flex items-center gap-3">
-                <p className="text-sm font-semibold">{step.name}</p>
-                <span className="text-xs text-muted-foreground">
+                <p className="text-sm font-semibold text-text">{step.name}</p>
+                <span className="text-xs text-text-muted">
                   {new Date(step.startedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                 </span>
               </div>
-              <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
+              <ul className="mt-2 space-y-1 text-sm text-text-muted">
                 {step.logs.map((log, logIdx) => (
-                  <li key={logIdx}>â€¢ {log}</li>
+                  <li key={logIdx} className="flex items-start gap-2">
+                    <span className="text-accent" aria-hidden="true">
+                      •
+                    </span>
+                    {log}
+                  </li>
                 ))}
               </ul>
             </div>

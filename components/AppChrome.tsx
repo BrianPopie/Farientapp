@@ -46,7 +46,7 @@ export function AppChrome({ children }: AppChromeProps) {
         <FocusModeProvider value={focusValue}>
           <>
             <div className="w-full">
-              <div className="grid min-h-screen grid-cols-[240px_minmax(0,1fr)] bg-background">
+              <div className="grid min-h-screen grid-cols-[240px_minmax(0,1fr)] bg-bg">
                 <Sidebar authed={authed} onSignOut={handleSignOut} />
                 <div className="flex flex-col">
                   <Nav />

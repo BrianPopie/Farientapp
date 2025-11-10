@@ -44,12 +44,9 @@ const DropdownMenuSubContent = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DropdownMenuPrimitive.SubContent
     ref={ref}
-    className={cn(
-      "z-50 min-w-[8rem] overflow-hidden rounded-2xl border border-border bg-card p-1 text-foreground shadow-lg",
-      className
-    )}
-    {...props}
-  />
+      className={cn("z-50 min-w-[8rem] overflow-hidden rounded-2xl border border-border bg-surface p-1 text-text shadow-lg", className)}
+      {...props}
+    />
 ));
 DropdownMenuSubContent.displayName = DropdownMenuPrimitive.SubContent.displayName;
 
@@ -61,10 +58,7 @@ const DropdownMenuContent = React.forwardRef<
     <DropdownMenuPrimitive.Content
       ref={ref}
       sideOffset={sideOffset}
-      className={cn(
-        "z-50 min-w-[12rem] overflow-hidden rounded-2xl border border-border bg-card p-1 text-foreground shadow-lg",
-        className
-      )}
+      className={cn("z-50 min-w-[12rem] overflow-hidden rounded-2xl border border-border bg-surface p-1 text-text shadow-lg", className)}
       {...props}
     />
   </DropdownMenuPrimitive.Portal>
@@ -142,7 +136,7 @@ const DropdownMenuLabel = React.forwardRef<
 >(({ className, inset, ...props }, ref) => (
   <DropdownMenuPrimitive.Label
     ref={ref}
-    className={cn("px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground", inset && "pl-8", className)}
+    className={cn("px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-text-muted", inset && "pl-8", className)}
     {...props}
   />
 ));
@@ -157,7 +151,7 @@ const DropdownMenuSeparator = React.forwardRef<
 DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName;
 
 const DropdownMenuShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
-  <span className={cn("ml-auto text-xs tracking-widest text-muted-foreground", className)} {...props} />
+  <span className={cn("ml-auto text-xs tracking-widest text-text-muted", className)} {...props} />
 );
 DropdownMenuShortcut.displayName = "DropdownMenuShortcut";
 

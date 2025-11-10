@@ -34,8 +34,8 @@ export function ReportPreview() {
           <SlideCard key={slide.title} {...slide} />
         ))}
       </div>
-      <div className="rounded-3xl border border-border bg-card p-5">
-        <p className="text-xs uppercase tracking-wide text-muted-foreground">Recent citations</p>
+      <div className="rounded-3xl border border-border bg-surface p-5 shadow-sm">
+        <p className="text-[0.75rem] uppercase tracking-wide text-text-muted">Recent citations</p>
         <div className="mt-3 flex flex-wrap gap-2">
           {(citations as Citation[]).slice(0, 3).map((citation) => (
             <CitationChip key={citation.id} citation={citation} />

@@ -1,4 +1,3 @@
-import "server-only";
 import { NextRequest } from "next/server";
 import { openai, defaultModel } from "@/lib/ai/openai";
 

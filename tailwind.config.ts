@@ -25,21 +25,37 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)"
       },
       colors: {
-        background: "rgb(var(--background) / <alpha-value>)",
-        foreground: "rgb(var(--foreground) / <alpha-value>)",
-        card: "rgb(var(--card) / <alpha-value>)",
-        "card-foreground": "rgb(var(--card-foreground) / <alpha-value>)",
-        muted: "rgb(var(--muted) / <alpha-value>)",
-        "muted-foreground": "rgb(var(--muted-foreground) / <alpha-value>)",
-        border: "rgb(var(--border) / <alpha-value>)",
-        primary: "rgb(var(--primary) / <alpha-value>)",
-        "primary-foreground": "rgb(var(--primary-foreground) / <alpha-value>)",
-        success: "rgb(var(--success) / <alpha-value>)",
-        warning: "rgb(var(--warning) / <alpha-value>)",
-        danger: "rgb(var(--danger) / <alpha-value>)",
-        "chart-1": "rgb(var(--chart-1) / <alpha-value>)",
-        "chart-2": "rgb(var(--chart-2) / <alpha-value>)",
-        "chart-3": "rgb(var(--chart-3) / <alpha-value>)"
+        bg: "hsl(var(--bg) / <alpha-value>)",
+        surface: "hsl(var(--surface) / <alpha-value>)",
+        muted: "hsl(var(--muted) / <alpha-value>)",
+        border: "hsl(var(--border) / <alpha-value>)",
+        ring: "hsl(var(--ring) / <alpha-value>)",
+        text: "hsl(var(--text) / <alpha-value>)",
+        "text-muted": "hsl(var(--text-muted) / <alpha-value>)",
+        accent: "hsl(var(--accent) / <alpha-value>)",
+        "accent-foreground": "hsl(var(--accent-foreground) / <alpha-value>)",
+        success: "hsl(var(--success) / <alpha-value>)",
+        warning: "hsl(var(--warning) / <alpha-value>)",
+        danger: "hsl(var(--danger) / <alpha-value>)",
+        // legacy tokens mapped to new system for backward compatibility
+        background: "hsl(var(--bg) / <alpha-value>)",
+        foreground: "hsl(var(--text) / <alpha-value>)",
+        card: "hsl(var(--surface) / <alpha-value>)",
+        "card-foreground": "hsl(var(--text) / <alpha-value>)",
+        mutedLegacy: "hsl(var(--muted) / <alpha-value>)",
+        "muted-foreground": "hsl(var(--text-muted) / <alpha-value>)",
+        input: "hsl(var(--border) / <alpha-value>)",
+        primary: "hsl(var(--accent) / <alpha-value>)",
+        "primary-foreground": "hsl(var(--accent-foreground) / <alpha-value>)"
+      },
+      fontSize: {
+        xs: ["0.85rem", "1.45"],
+        sm: ["0.95rem", "1.55"],
+        base: ["1rem", "1.65"],
+        lg: ["1.125rem", "1.75"],
+        xl: ["1.35rem", "1.35"],
+        "2xl": ["1.65rem", "1.3"],
+        "3xl": ["2rem", "1.2"]
       },
       keyframes: {
         "accordion-down": {

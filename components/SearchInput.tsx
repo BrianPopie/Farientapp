@@ -50,7 +50,7 @@ export function SearchInput() {
 
   return (
     <div className="relative w-full max-w-2xl">
-      <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-muted-foreground">
+      <div className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-text-muted">
         <Search className="h-4 w-4" />
       </div>
       <Input
@@ -60,15 +60,15 @@ export function SearchInput() {
         placeholder="Search filings, policies, citations (press /)"
         className="pl-10"
       />
-      {loading && <Loader2 className="absolute right-3 top-3 h-5 w-5 animate-spin text-muted-foreground" />}
+      {loading && <Loader2 className="absolute right-3 top-3 h-5 w-5 animate-spin text-text-muted" />}
       {value && results.length > 0 && (
-        <div className="absolute left-0 right-0 top-14 z-30 rounded-2xl border border-border bg-card/95 p-2 shadow-2xl">
+        <div className="absolute left-0 right-0 top-14 z-30 rounded-2xl border border-border bg-surface/95 p-2 shadow-2xl">
           {results.map((hit) => (
             <div key={hit.id} className="flex items-start justify-between gap-3 rounded-2xl px-3 py-2 hover:bg-muted/50">
               <div>
-                <p className="text-sm font-medium text-foreground">{hit.title}</p>
-                <p className="text-xs text-muted-foreground">{hit.snippet}</p>
-                <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{hit.meta}</p>
+                <p className="text-sm font-medium text-text">{hit.title}</p>
+                <p className="text-xs text-text-muted">{hit.snippet}</p>
+                <p className="text-[11px] uppercase tracking-wide text-text-muted">{hit.meta}</p>
               </div>
               <Button size="sm" variant="ghost" className="gap-2 text-xs" onClick={() => handleOpen(hit)}>
                 View span
@@ -79,7 +79,7 @@ export function SearchInput() {
         </div>
       )}
       {value && !results.length && !loading && (
-        <div className="absolute left-0 right-0 top-14 rounded-2xl border border-border bg-card/90 px-4 py-3 text-sm text-muted-foreground">
+        <div className="absolute left-0 right-0 top-14 rounded-2xl border border-border bg-surface/90 px-4 py-3 text-sm text-text-muted">
           No matches yet - ingestion agents will add relevant citations after parsing.
         </div>
       )}

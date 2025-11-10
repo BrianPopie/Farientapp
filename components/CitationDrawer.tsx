@@ -23,21 +23,20 @@ export function CitationDrawer() {
     if (process.env.NODE_ENV !== "production" && renderGuardRef.current > 20) {
       console.warn("Potential render loop detected in <CitationDrawer>");
     }
-  });
+  }, []);
 
   const { payload } = citationDrawer;
   const isOpen = Boolean(payload);
-  const title = payload?.type === "policy" ? `${payload.data.firm} · ${payload.data.section}` : payload?.data.companyName ?? "Citation";
+  const title =
+    payload?.type === "policy" ? `${payload.data.firm} / ${payload.data.section}` : payload?.data.companyName ?? "Citation";
   const description =
-    payload?.type === "policy"
-      ? `${payload.data.yearFrom}→${payload.data.yearTo}`
-      : `${payload?.data.filing} p.${payload?.data.page}`;
+    payload?.type === "policy" ? `${payload.data.yearFrom}-${payload.data.yearTo}` : `${payload?.data.filing} p.${payload?.data.page}`;
 
   const copyReference = () => {
     if (!payload) return;
     const text =
       payload.type === "policy"
-        ? `${payload.data.firm} ${payload.data.section} ${payload.data.yearFrom}→${payload.data.yearTo}: ${payload.data.changeSummary}`
+        ? `${payload.data.firm} ${payload.data.section} ${payload.data.yearFrom}-${payload.data.yearTo}: ${payload.data.changeSummary}`
         : `${payload.data.filing} ${payload.data.year}: p.${payload.data.page} lines ${payload.data.lineStart}-${payload.data.lineEnd}`;
     navigator.clipboard.writeText(text).catch(() => {});
   };
@@ -47,8 +46,8 @@ export function CitationDrawer() {
     if (payload.type === "policy") {
       return (
         <div className="space-y-4 p-6">
-          <p className="text-sm text-muted-foreground">{payload.data.changeSummary}</p>
-          <div className="rounded-2xl border border-border bg-card p-4 text-xs text-muted-foreground">
+          <p className="text-sm text-text-muted">{payload.data.changeSummary}</p>
+          <div className="rounded-2xl border border-border bg-surface p-4 text-xs text-text-muted">
             Versioned rule pack placeholder - plug ISS / Glass Lewis API here.
           </div>
         </div>
@@ -57,24 +56,24 @@ export function CitationDrawer() {
 
     return (
       <div className="space-y-4 p-6">
-        <p className="rounded-2xl border border-border bg-card p-4 text-sm leading-relaxed">{payload.data.text}</p>
-        <dl className="grid grid-cols-2 gap-4 text-xs text-muted-foreground">
+        <p className="rounded-2xl border border-border bg-surface p-4 text-sm leading-relaxed text-text">{payload.data.text}</p>
+        <dl className="grid grid-cols-2 gap-4 text-xs text-text-muted">
           <div>
-            <dt className="uppercase">Filing</dt>
+            <dt className="uppercase tracking-wide">Filing</dt>
             <dd>{payload.data.filing}</dd>
           </div>
           <div>
-            <dt className="uppercase">Page · Lines</dt>
+            <dt className="uppercase tracking-wide">Page & Lines</dt>
             <dd>
-              {payload.data.page} · {payload.data.lineStart}-{payload.data.lineEnd}
+              {payload.data.page} / {payload.data.lineStart}-{payload.data.lineEnd}
             </dd>
           </div>
           <div>
-            <dt className="uppercase">Company</dt>
+            <dt className="uppercase tracking-wide">Company</dt>
             <dd>{payload.data.companyName}</dd>
           </div>
           <div>
-            <dt className="uppercase">Year</dt>
+            <dt className="uppercase tracking-wide">Year</dt>
             <dd>{payload.data.year}</dd>
           </div>
         </dl>
