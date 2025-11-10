@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Copy, X } from "lucide-react";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { useUIStore } from "@/store/useUI";
 
@@ -12,6 +12,8 @@ export function CitationDrawer() {
     closeDrawer: state.closeDrawer,
     handleDrawerVisibility: state.handleDrawerVisibility
   }));
+
+  const [mounted, setMounted] = useState(false);
 
   if (process.env.NODE_ENV !== "production") {
     console.count("CitationDrawer render");
@@ -25,12 +27,33 @@ export function CitationDrawer() {
     }
   }, []);
 
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
   const { payload } = citationDrawer;
   const isOpen = Boolean(payload);
   const title =
     payload?.type === "policy" ? `${payload.data.firm} / ${payload.data.section}` : payload?.data.companyName ?? "Citation";
   const description =
     payload?.type === "policy" ? `${payload.data.yearFrom}-${payload.data.yearTo}` : `${payload?.data.filing} p.${payload?.data.page}`;
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        handleDrawerVisibility(false);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [handleDrawerVisibility, isOpen]);
 
   const copyReference = () => {
     if (!payload) return;
@@ -81,29 +104,44 @@ export function CitationDrawer() {
     );
   }, [payload]);
 
-  return (
-    <Drawer open={isOpen} onOpenChange={handleDrawerVisibility}>
-      <DrawerContent>
-        <DrawerHeader className="flex items-center justify-between">
+  if (!mounted || !isOpen || !payload) {
+    return null;
+  }
+
+  const drawer = (
+    <div className="fixed inset-0 z-50 flex justify-end">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => handleDrawerVisibility(false)} />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Citation drawer"
+        className="relative h-full w-full max-w-xl border-l border-border bg-surface/95 shadow-[0_20px_60px_rgba(15,23,42,0.35)]"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="flex items-center justify-between border-b border-border p-6">
           <div>
-            <DrawerTitle>{title}</DrawerTitle>
-            <DrawerDescription>{description}</DrawerDescription>
+            <p className="text-lg font-semibold">{title}</p>
+            <p className="text-sm text-text-muted">{description}</p>
           </div>
           <Button variant="ghost" size="icon" onClick={closeDrawer}>
             <X className="h-4 w-4" />
           </Button>
-        </DrawerHeader>
+        </div>
         {renderBody}
-        <DrawerFooter className="flex flex-col gap-2 sm:flex-row">
-          <Button onClick={copyReference} className="gap-2">
-            <Copy className="h-4 w-4" />
-            Copy reference
-          </Button>
-          <Button variant="ghost" onClick={closeDrawer}>
-            Close
-          </Button>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
+        <div className="mt-auto border-t border-border p-6">
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button onClick={copyReference} className="gap-2">
+              <Copy className="h-4 w-4" />
+              Copy reference
+            </Button>
+            <Button variant="ghost" onClick={closeDrawer}>
+              Close
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
+
+  return createPortal(drawer, document.body);
 }
