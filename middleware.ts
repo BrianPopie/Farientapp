@@ -2,51 +2,51 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { SESSION_COOKIE_NAME, parseSession } from "@/lib/auth/session";
 
-const PUBLIC_PATHS = new Set(["/", "/login"]);
-const SKIP_PREFIXES = ["/_next", "/assets", "/favicon.ico", "/robots.txt", "/sitemap.xml"];
-
-function shouldBypass(pathname: string) {
-  if (pathname.startsWith("/api/")) return true;
-  return SKIP_PREFIXES.some((prefix) => pathname.startsWith(prefix));
-}
+const STATIC_PREFIXES = ["/_next", "/images", "/assets"];
+const PUBLIC_FILES = new Set(["/favicon.ico", "/robots.txt", "/sitemap.xml"]);
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (shouldBypass(pathname)) {
+  if (pathname.startsWith("/api/")) {
+    return NextResponse.next();
+  }
+
+  const isStatic = STATIC_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+  const isPublicFile = PUBLIC_FILES.has(pathname);
+
+  if (isStatic || isPublicFile) {
     return NextResponse.next();
   }
 
   const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME)?.value ?? null;
   const session = parseSession(sessionCookie);
-  const hasSession = Boolean(session);
-  const isPublicPath = PUBLIC_PATHS.has(pathname);
+  const isAuthed = Boolean(session);
 
-  let redirectTarget: string | null = null;
-  if (!hasSession && !isPublicPath) {
-    redirectTarget = "/login";
-  } else if (hasSession && isPublicPath) {
-    redirectTarget = "/dashboard";
+  const tempDebugHeaders = new Headers({
+    "x-debug-path": pathname,
+    "x-debug-authed": String(isAuthed)
+  });
+
+  if (!isAuthed && pathname !== "/login") {
+    const loginUrl = new URL("/login", request.url);
+    const response = NextResponse.redirect(loginUrl);
+    tempDebugHeaders.forEach((value, key) => response.headers.set(key, value));
+    return response;
   }
 
-  const logPayload = {
-    pathname,
-    hasSession,
-    sessionEmail: session?.email ?? null,
-    redirect: redirectTarget,
-    host: request.headers.get("host"),
-    referer: request.headers.get("referer")
-  };
-  console.error("[middleware] guard", JSON.stringify(logPayload));
-
-  if (redirectTarget && redirectTarget !== pathname) {
-    const url = new URL(redirectTarget, request.url);
-    return NextResponse.redirect(url);
+  if (isAuthed && pathname === "/login") {
+    const dashboardUrl = new URL("/dashboard", request.url);
+    const response = NextResponse.redirect(dashboardUrl);
+    tempDebugHeaders.forEach((value, key) => response.headers.set(key, value));
+    return response;
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+  tempDebugHeaders.forEach((value, key) => response.headers.set(key, value));
+  return response;
 }
 
 export const config = {
-  matcher: ["/((?!_next|api|assets|favicon\\.ico|robots\\.txt|sitemap\\.xml).*)"]
+  matcher: ["/((?!_next|api/health|api/env-sanity|favicon\\.ico|images|assets).*)"]
 };

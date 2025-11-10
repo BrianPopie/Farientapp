@@ -1,27 +1,17 @@
 import { NextResponse } from "next/server";
 
-const REQUIRED_ENVS = [
-  "OPENAI_API_KEY",
-  "OPENAI_MODEL",
+export const runtime = "nodejs";
+
+const KEYS = [
   "NEXTAUTH_URL",
   "NEXTAUTH_SECRET",
+  "SUPABASE_URL",
+  "SUPABASE_ANON_KEY",
   "NEXT_PUBLIC_SUPABASE_URL",
   "NEXT_PUBLIC_SUPABASE_ANON_KEY"
 ] as const;
 
-type EnvFlag = {
-  key: (typeof REQUIRED_ENVS)[number];
-  defined: boolean;
-};
-
 export async function GET() {
-  const envs: EnvFlag[] = REQUIRED_ENVS.map((key) => ({
-    key,
-    defined: Boolean(process.env[key])
-  }));
-
-  return NextResponse.json({
-    ok: envs.every((entry) => entry.defined),
-    envs
-  });
+  const envFlags = Object.fromEntries(KEYS.map((key) => [key, Boolean(process.env[key])]));
+  return NextResponse.json(envFlags);
 }
