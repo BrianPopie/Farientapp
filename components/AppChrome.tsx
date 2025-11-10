@@ -14,14 +14,19 @@ interface AppChromeProps {
 }
 
 export function AppChrome({ children }: AppChromeProps) {
-  const [authed, setAuthed] = useState(false);
+  const [authed, setAuthed] = useState<boolean | null>(null);
   const pathname = usePathname();
   const router = useRouter();
   const loginRoute = pathname === "/login";
 
   useEffect(() => {
-    setAuthed(fakeAuth.isAuthed());
-  }, [pathname]);
+    const ok = fakeAuth.isAuthed();
+    setAuthed(ok);
+    if (!ok && !loginRoute) {
+      router.replace("/login");
+    }
+  }, [loginRoute, pathname, router]);
+
   const focusValue = useMemo(
     () => ({
       focusMode: true,
@@ -37,11 +42,21 @@ export function AppChrome({ children }: AppChromeProps) {
     router.push("/login");
   };
 
+  const renderLoading = (message = "Loading workspace…") => (
+    <div className="flex min-h-screen w-full items-center justify-center bg-bg text-text">
+      <p className="text-sm text-text-muted">{message}</p>
+    </div>
+  );
+
   return (
     <>
       <DevConsoleSilencer />
       {loginRoute ? (
         children
+      ) : authed === null ? (
+        renderLoading()
+      ) : !authed ? (
+        renderLoading("Redirecting to login…")
       ) : (
         <FocusModeProvider value={focusValue}>
           <>

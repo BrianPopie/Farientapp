@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { ArrowRight, Database, FileStack, Presentation } from "lucide-react";
 import { StatCard } from "@/components/StatCard";
 import { Button } from "@/components/ui/button";
@@ -10,7 +8,6 @@ import { TrendChart } from "@/components/TrendChart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendPoint } from "@/lib/types";
 import { DataBadge } from "@/components/DataBadge";
-import { fakeAuth } from "@/lib/fakeAuth";
 import { PageHeading, BodyText, SectionHeading } from "@/components/ui/typography";
 
 const heroTrend: TrendPoint[] = [
@@ -29,21 +26,6 @@ const insightCards = [
 
 
 export default function OverviewPage() {
-  const router = useRouter();
-  const [authed, setAuthed] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const ok = fakeAuth.isAuthed();
-    if (!ok) {
-      router.replace("/login");
-    }
-    setAuthed(ok);
-  }, [router]);
-
-  if (!authed) {
-    return null;
-  }
-
   return (
     <main className="flex justify-center px-6 py-10 text-text">
       <div className="dashboard-grid w-full max-w-[1500px] space-y-10">
