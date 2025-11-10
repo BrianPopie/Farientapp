@@ -1,0 +1,34 @@
+[
+  {
+    "band": "c_suite",
+    "role": "CFO",
+    "peers": ["AUR", "BOR", "NWD"],
+    "metrics": { "tsr": 11.2, "revCAGR": 8.5, "margin": 21.4 },
+    "payMix": { "salaryPct": 20, "bonusPct": 25, "equityPct": 55 },
+    "redFlags": ["Pre-vote retention grant disclosed for Borealis CHRO"]
+  },
+  {
+    "band": "pnl",
+    "role": "Division President",
+    "peers": ["AUR", "BOR"],
+    "metrics": { "tsr": 9.1, "revCAGR": 7.2, "margin": 18 },
+    "payMix": { "salaryPct": 30, "bonusPct": 35, "equityPct": 35 },
+    "redFlags": ["Bonus metrics overweight revenue despite margin erosion"]
+  },
+  {
+    "band": "critical_tech",
+    "role": "VP Engineering",
+    "peers": ["AUR", "BOR", "NWD"],
+    "metrics": { "tsr": 15.5, "revCAGR": 12.1, "margin": 24.6 },
+    "payMix": { "salaryPct": 18, "bonusPct": 22, "equityPct": 60 },
+    "redFlags": ["Equity refresh cadence accelerated vs peers"]
+  },
+  {
+    "band": "successors",
+    "role": "Ready-now CFO",
+    "peers": ["AUR", "BOR"],
+    "metrics": { "tsr": 10.3, "revCAGR": 6.8, "margin": 19.7 },
+    "payMix": { "salaryPct": 25, "bonusPct": 25, "equityPct": 50 },
+    "redFlags": ["Need source"]
+  }
+]

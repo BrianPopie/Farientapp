@@ -1,0 +1,47 @@
+[
+  {
+    "id": "role_aur_cfo",
+    "companyId": "aur",
+    "title": "Chief Financial Officer",
+    "band": "c_suite",
+    "scope": "Corporate",
+    "geo": "New York, NY",
+    "stage": "Growth"
+  },
+  {
+    "id": "role_bor_chro",
+    "companyId": "bor",
+    "title": "Chief Human Resources Officer",
+    "band": "c_suite",
+    "scope": "Corporate",
+    "geo": "Chicago, IL",
+    "stage": "Efficient"
+  },
+  {
+    "id": "role_bor_pnl",
+    "companyId": "bor",
+    "title": "Division President, Storage Solutions",
+    "band": "pnl",
+    "scope": "BU",
+    "geo": "Austin, TX",
+    "stage": "Turnaround"
+  },
+  {
+    "id": "role_aur_vp_eng",
+    "companyId": "aur",
+    "title": "VP Engineering",
+    "band": "critical_tech",
+    "scope": "Corporate",
+    "geo": "Seattle, WA",
+    "stage": "Growth"
+  },
+  {
+    "id": "role_aur_successor",
+    "companyId": "aur",
+    "title": "Ready-now CFO Successor",
+    "band": "successors",
+    "scope": "Corporate",
+    "geo": "San Francisco, CA",
+    "stage": "Efficient"
+  }
+]

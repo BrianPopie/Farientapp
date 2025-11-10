@@ -1,7 +1,5 @@
-"use client";
-
 import Link from "next/link";
-import dynamic from "next/dynamic";
+import { Suspense } from "react";
 import { ArrowRight, Database, FileStack, Presentation } from "lucide-react";
 import { StatCard } from "@/components/StatCard";
 import { Button } from "@/components/ui/button";
@@ -9,11 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendPoint } from "@/lib/types";
 import { DataBadge } from "@/components/DataBadge";
 import { PageHeading, BodyText, SectionHeading } from "@/components/ui/typography";
+import { TrendChartIsland } from "./trend-chart-island";
 
-const TrendChart = dynamic(() => import("@/components/TrendChart").then((mod) => mod.TrendChart), {
-  ssr: false,
-  loading: () => <div className="h-[320px] rounded-2xl border border-dashed border-border/60 bg-muted/40 animate-pulse" />
-});
+export const dynamic = "force-static";
+export const revalidate = 60;
 
 const heroTrend: TrendPoint[] = [
   { year: 2020, tsrPct: -3, compUSD: 8400000 },
@@ -37,8 +34,8 @@ export default function DashboardPage() {
           <DataBadge tone="info">Executive Compensation Intelligence</DataBadge>
           <PageHeading className="mt-4 text-text">Deal Intelligence Dashboard</PageHeading>
           <BodyText muted className="mt-3 text-base xl:text-lg">
-            Farient transforms DEF 14As, 10-K/Qs, and policy packs into structured insights so analysts can defend every metric in front
-            of the board.
+            Normalize fragmented comp for C-suite minus CEO, P&L leaders, and critical technical roles; then benchmark, assess policy
+            risk, and generate board-ready outputs with traceable citations.
           </BodyText>
           <div className="mt-6 flex flex-wrap gap-3">
             <Button asChild className="gap-2 text-base">
@@ -70,7 +67,11 @@ export default function DashboardPage() {
             <CardTitle className="text-xl font-semibold text-text">TSR vs CEO Total Comp</CardTitle>
           </CardHeader>
           <CardContent className="min-w-0 min-h-0">
-            <TrendChart data={heroTrend} />
+            <Suspense
+              fallback={<div className="h-[320px] rounded-2xl border border-dashed border-border/60 bg-muted/40 animate-pulse" />}
+            >
+              <TrendChartIsland data={heroTrend} />
+            </Suspense>
           </CardContent>
         </Card>
       </section>
@@ -79,7 +80,12 @@ export default function DashboardPage() {
         <StatCard title="Cycle time" value="4m 12s" description="Avg workflow" delta={{ label: "-63% vs manual", positive: true }} />
         <StatCard title="Traceable metrics" value="312" description="Active citations" icon={<Database className="h-5 w-5" />} />
         <StatCard title="Filings queued" value="28" description="Across 10 issuers" icon={<FileStack className="h-5 w-5" />} />
-        <StatCard title="Board templates" value="7" description="Docs + slides" icon={<Presentation className="h-5 w-5" />} />
+        <StatCard
+          title="Non-CEO roles covered"
+          value="7"
+          description="C-Suite-minus-CEO, P&L, Critical Tech, Successors"
+          icon={<Presentation className="h-5 w-5" />}
+        />
       </section>
 
       <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-3 text-text">

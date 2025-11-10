@@ -60,11 +60,21 @@ const stepperData = [
   { id: "index", label: "Index", status: "upcoming" as const }
 ];
 
+const currency = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+
 const summaryCompTable = [
-  { exec: "Maya Torres (CEO)", salary: "$1,100,000", bonus: "$1,900,000", equity: "$10,200,000" },
-  { exec: "Evan Burke (CFO)", salary: "$650,000", bonus: "$840,000", equity: "$3,200,000" },
-  { exec: "Priya Shah (CHRO)", salary: "$520,000", bonus: "$610,000", equity: "$2,000,000" }
+  { exec: "Maya Torres (CEO)", salary: 1_100_000, bonus: 1_900_000, equity: 10_200_000 },
+  { exec: "Evan Burke (CFO)", salary: 650_000, bonus: 840_000, equity: 3_200_000 },
+  { exec: "Priya Shah (CHRO)", salary: 520_000, bonus: 610_000, equity: 2_000_000 }
 ];
+
+const formatMixPill = (row: (typeof summaryCompTable)[number]) => {
+  const total = row.salary + row.bonus + row.equity || 1;
+  const salaryPct = Math.round((row.salary / total) * 100);
+  const bonusPct = Math.round((row.bonus / total) * 100);
+  const equityPct = Math.max(0, 100 - salaryPct - bonusPct);
+  return `${salaryPct}% / ${bonusPct}% / ${equityPct}%`;
+};
 
 const grantsTable = [
   { grant: "PSU - AI Momentum", type: "PSU", value: "$6,800,000", metric: "TSR vs SaaS peers" },
@@ -192,9 +202,33 @@ export default function FilingsPage() {
             <DataTable
               columns={[
                 { key: "exec", header: "Executive" },
-                { key: "salary", header: "Salary", align: "right" },
-                { key: "bonus", header: "Bonus", align: "right" },
-                { key: "equity", header: "Equity", align: "right" }
+                {
+                  key: "salary",
+                  header: "Salary",
+                  align: "right",
+                  render: (row) => currency.format((row as (typeof summaryCompTable)[number]).salary)
+                },
+                {
+                  key: "bonus",
+                  header: "Bonus",
+                  align: "right",
+                  render: (row) => currency.format((row as (typeof summaryCompTable)[number]).bonus)
+                },
+                {
+                  key: "equity",
+                  header: "Equity",
+                  align: "right",
+                  render: (row) => currency.format((row as (typeof summaryCompTable)[number]).equity)
+                },
+                {
+                  key: "mix",
+                  header: "Mix",
+                  render: (row) => (
+                    <span className="rounded-full border border-border/60 bg-surface/60 px-3 py-1 text-xs text-text">
+                      {formatMixPill(row as (typeof summaryCompTable)[number])}
+                    </span>
+                  )
+                }
               ]}
               data={summaryCompTable}
               density="compact"

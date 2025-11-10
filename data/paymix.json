@@ -1,0 +1,26 @@
+[
+  {
+    "company": "Aurelius (AUR)",
+    "role": "CFO",
+    "salaryPct": 17,
+    "bonusPct": 23,
+    "equityPct": 60,
+    "source": "cit_aur_sct_pg32"
+  },
+  {
+    "company": "Borealis (BOR)",
+    "role": "Division President",
+    "salaryPct": 28,
+    "bonusPct": 32,
+    "equityPct": 40,
+    "source": "cit_bor_retention"
+  },
+  {
+    "company": "Northwind (NWD)",
+    "role": "Head of Product",
+    "salaryPct": 20,
+    "bonusPct": 25,
+    "equityPct": 55,
+    "source": "need source"
+  }
+]

@@ -17,6 +17,27 @@ export type Executive = {
   tenureYears: number;
 };
 
+export type RoleBandKey = "c_suite" | "pnl" | "critical_tech" | "successors";
+
+export interface RoleProfile {
+  id: string;
+  companyId: string;
+  title: string;
+  band: RoleBandKey;
+  scope: "Corporate" | "BU";
+  geo?: string;
+  stage?: "Growth" | "Efficient" | "Turnaround";
+}
+
+export interface BenchSpec {
+  band: RoleBandKey;
+  role: string;
+  peers: string[];
+  metrics: { tsr?: number; revCAGR?: number; margin?: number };
+  payMix?: { salaryPct: number; bonusPct: number; equityPct: number };
+  redFlags?: string[];
+}
+
 export type MetricRef = {
   metricId: string;
   target?: string;

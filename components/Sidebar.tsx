@@ -3,15 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { FileStack, Presentation, Home, MessageSquare } from "lucide-react";
+import { FileStack, Presentation, Home, MessageSquare, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
   { href: "/dashboard", label: "Overview", icon: Home },
   { href: "/filings", label: "Ingestion", icon: FileStack },
-  { href: "/chatbot", label: "AI Chatbot", icon: MessageSquare },
-  { href: "/reports", label: "Reports", icon: Presentation }
+  { href: "/ai", label: "AI Chatbot", icon: MessageSquare },
+  { href: "/reports", label: "Reports", icon: Presentation },
+  { href: "/admin", label: "Admin", icon: ShieldCheck }
 ];
 
 interface SidebarProps {

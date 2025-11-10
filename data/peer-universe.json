@@ -1,0 +1,12 @@
+[
+  { "ticker": "AUR", "industry": "Enterprise Software", "model": "SaaS", "rev": 950000000, "tsr": 18, "margin": 24 },
+  { "ticker": "BOR", "industry": "Enterprise Software", "model": "SaaS", "rev": 780000000, "tsr": 14, "margin": 21 },
+  { "ticker": "NWD", "industry": "Enterprise Software", "model": "SaaS", "rev": 1020000000, "tsr": 16, "margin": 23 },
+  { "ticker": "CLD", "industry": "Enterprise Software", "model": "SaaS", "rev": 880000000, "tsr": 12, "margin": 19 },
+  { "ticker": "DTX", "industry": "Enterprise Software", "model": "SaaS", "rev": 640000000, "tsr": 20, "margin": 22 },
+  { "ticker": "ELM", "industry": "Enterprise Software", "model": "SaaS", "rev": 720000000, "tsr": 17, "margin": 25 },
+  { "ticker": "FOR", "industry": "Enterprise Software", "model": "SaaS", "rev": 690000000, "tsr": 15, "margin": 20 },
+  { "ticker": "HEX", "industry": "Enterprise Software", "model": "SaaS", "rev": 830000000, "tsr": 13, "margin": 18 },
+  { "ticker": "ION", "industry": "Enterprise Software", "model": "SaaS", "rev": 910000000, "tsr": 19, "margin": 26 },
+  { "ticker": "LUM", "industry": "Enterprise Software", "model": "SaaS", "rev": 760000000, "tsr": 11, "margin": 17 }
+]
