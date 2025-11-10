@@ -5,8 +5,8 @@ import { Button } from "./ui/button";
 
 type FileCardProps = {
   title: string;
-  source: "EDGAR" | "IR";
-  filing: "DEF 14A" | "10-K" | "10-Q" | "8-K" | "Form 4";
+  source: "EDGAR" | "IR" | "Upload";
+  filing: "DEF 14A" | "10-K" | "10-Q" | "8-K" | "Form 4" | "PDF";
   year: number;
   status: "queued" | "parsing" | "extracted" | "indexed";
   citationCount: number;
@@ -45,4 +45,4 @@ export function FileCard({ title, source, filing, year, status, citationCount }:
       </CardContent>
     </Card>
   );
-}
+}

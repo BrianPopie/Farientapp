@@ -17,7 +17,7 @@ export function AppChrome({ children }: AppChromeProps) {
   const [authed, setAuthed] = useState<boolean | null>(null);
   const pathname = usePathname();
   const router = useRouter();
-  const loginRoute = pathname === "/login";
+  const loginRoute = pathname === "/login" || pathname === "/";
 
   useEffect(() => {
     const ok = fakeAuth.isAuthed();

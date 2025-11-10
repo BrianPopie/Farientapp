@@ -164,6 +164,13 @@ export type SearchResult = {
   hits: SearchHit[];
 };
 
+export type UploadedFiling = {
+  id: string;
+  name: string;
+  size: number;
+  uploadedAt: string;
+};
+
 export type DrawerPayload =
   | {
     type: "citation";

@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { UploadDropzone } from "@/components/UploadDropzone";
 import { FileCard } from "@/components/FileCard";
 import { Stepper } from "@/components/Stepper";
@@ -8,7 +9,7 @@ import { CitationChip } from "@/components/CitationChip";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import citations from "@/data/citations.json";
 import { Badge } from "@/components/ui/badge";
-import type { Citation } from "@/lib/types";
+import type { Citation, UploadedFiling } from "@/lib/types";
 import { AiInsightPanel } from "@/components/AiInsightPanel";
 import { PageHeading, BodyText } from "@/components/ui/typography";
 
@@ -87,6 +88,45 @@ the Gather->Index stepper, entity normalization statuses, and the confidence/que
 When asked, mention citations or filings by name and recommend the next best action for analysts. Keep responses under 120 words.`;
 
 export default function FilingsPage() {
+  const [uploads, setUploads] = React.useState<UploadedFiling[]>([]);
+  const [loadingUploads, setLoadingUploads] = React.useState(false);
+  const [uploadError, setUploadError] = React.useState<string | null>(null);
+
+  const refreshUploads = React.useCallback(async () => {
+    setLoadingUploads(true);
+    setUploadError(null);
+    try {
+      const res = await fetch("/api/uploads");
+      if (!res.ok) {
+        throw new Error("Unable to load uploads");
+      }
+      const data = (await res.json()) as { files: UploadedFiling[] };
+      setUploads(data.files);
+    } catch (error) {
+      setUploadError(error instanceof Error ? error.message : "Unable to load uploads");
+    } finally {
+      setLoadingUploads(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    refreshUploads();
+  }, [refreshUploads]);
+
+  const handleUploaded = (file: UploadedFiling) => {
+    setUploads((prev) => [file, ...prev]);
+  };
+
+  const uploadCards = uploads.map((upload) => ({
+    title: upload.name,
+    source: "Upload" as const,
+    filing: "PDF" as const,
+    year: new Date(upload.uploadedAt).getFullYear(),
+    status: "queued" as const,
+    citationCount: 0
+  }));
+  const combinedFiles = [...uploadCards, ...files];
+
   return (
     <div className="space-y-10">
       <div className="flex flex-col gap-2">
@@ -99,10 +139,12 @@ export default function FilingsPage() {
       </div>
 
       <section className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
-        <UploadDropzone />
+        <UploadDropzone onUploaded={handleUploaded} />
         <div className="grid gap-4 sm:grid-cols-2">
-          {files.map((file) => (
-            <FileCard key={file.title} {...file} />
+          {loadingUploads && <p className="text-xs text-text-muted">Loading uploads…</p>}
+          {uploadError && <p className="text-xs text-danger">{uploadError}</p>}
+          {combinedFiles.map((file) => (
+            <FileCard key={`${file.title}-${file.source}-${file.year}`} {...file} />
           ))}
         </div>
       </section>

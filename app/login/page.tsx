@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import VideoBackground from "@/components/VideoBackground";
 import Image from "next/image";
 
-const REDIRECT_PATH = "/";
+const REDIRECT_PATH = "/dashboard";
 const emailRegex = /^\S+@\S+\.\S+$/;
 const pinRegex = /^\d{6}$/;
 

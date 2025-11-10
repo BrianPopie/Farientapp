@@ -8,7 +8,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
-  { href: "/", label: "Overview", icon: Home },
+  { href: "/dashboard", label: "Overview", icon: Home },
   { href: "/filings", label: "Ingestion", icon: FileStack },
   { href: "/chatbot", label: "AI Chatbot", icon: MessageSquare },
   { href: "/reports", label: "Reports", icon: Presentation }
