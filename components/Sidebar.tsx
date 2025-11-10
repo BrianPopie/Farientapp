@@ -23,7 +23,7 @@ export function Sidebar({ authed, onSignOut }: SidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="sticky top-0 hidden min-h-screen w-[240px] flex-col border-r border-border bg-[hsla(var(--bg)/0.9)] p-4 text-text shadow-[0_25px_80px_rgba(0,0,0,0.55)] backdrop-blur-xl lg:flex z-20">
+    <aside className="sticky top-0 hidden h-screen w-[240px] flex-col overflow-y-auto border-r border-border bg-[hsla(var(--bg)/0.9)] p-4 text-text shadow-[0_25px_80px_rgba(0,0,0,0.55)] backdrop-blur-xl lg:flex z-20">
       <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-surface/60 px-3 py-2">
         <Image src="/brand.svg" width={32} height={32} alt="Farient" className="rounded-lg" />
         <div>
