@@ -1,5 +1,6 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import { SESSION_COOKIE_NAME, parseSession } from "@/lib/auth/session";
 
 const PUBLIC_PATHS = new Set(["/", "/login"]);
 const SKIP_PREFIXES = ["/_next", "/assets", "/favicon.ico", "/robots.txt", "/sitemap.xml"];
@@ -16,8 +17,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const sessionCookie = request.cookies.get("farient_session")?.value ?? null;
-  const hasSession = Boolean(sessionCookie);
+  const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME)?.value ?? null;
+  const session = parseSession(sessionCookie);
+  const hasSession = Boolean(session);
   const isPublicPath = PUBLIC_PATHS.has(pathname);
 
   let redirectTarget: string | null = null;
@@ -30,6 +32,7 @@ export function middleware(request: NextRequest) {
   const logPayload = {
     pathname,
     hasSession,
+    sessionEmail: session?.email ?? null,
     redirect: redirectTarget,
     host: request.headers.get("host"),
     referer: request.headers.get("referer")
