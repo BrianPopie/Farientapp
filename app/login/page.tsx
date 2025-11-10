@@ -71,6 +71,7 @@ function LoginContent() {
               <Input
                 id="email"
                 type="email"
+                autoComplete="email"
                 placeholder="you@company.com"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
@@ -84,6 +85,7 @@ function LoginContent() {
               <Input
                 id="password"
                 type="password"
+                autoComplete="current-password"
                 placeholder="6-digit password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
