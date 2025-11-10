@@ -7,11 +7,7 @@ type Props = {
   className?: string;
 };
 
-export default function VideoBackground({
-  src = "/animation.mp4",
-  poster = "/login-poster.jpg",
-  className = ""
-}: Props) {
+export default function VideoBackground({ src = "/animation.mp4", poster, className = "" }: Props) {
   const [motionOK, setMotionOK] = React.useState(true);
 
   React.useEffect(() => {
@@ -28,17 +24,17 @@ export default function VideoBackground({
         <video
           className="absolute inset-0 h-full w-full object-cover"
           src={src}
-          poster={poster}
           autoPlay
           muted
           loop
           playsInline
           preload="metadata"
+          {...(poster ? { poster } : {})}
         />
       ) : (
         <div
           className="absolute inset-0 h-full w-full bg-cover bg-center"
-          style={{ backgroundImage: `url(${poster})` }}
+          style={poster ? { backgroundImage: `url(${poster})` } : { background: "radial-gradient(circle at 30% 20%, rgba(99,102,241,0.35), transparent 55%)" }}
           aria-hidden
         />
       )}
