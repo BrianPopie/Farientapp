@@ -1,6 +1,17 @@
 "use client";
 import * as React from "react";
 
+type NetworkInformation = {
+  saveData?: boolean;
+  addEventListener?: (type: string, listener: () => void) => void;
+  removeEventListener?: (type: string, listener: () => void) => void;
+};
+
+type NavigatorWithMemory = Navigator & {
+  deviceMemory?: number;
+  connection?: NetworkInformation;
+};
+
 type Props = {
   src?: string;
   poster?: string;
@@ -8,19 +19,47 @@ type Props = {
 };
 
 export default function VideoBackground({ src = "/animation.mp4", poster, className = "" }: Props) {
-  const [motionOK, setMotionOK] = React.useState(true);
+  const [shouldPlayVideo, setShouldPlayVideo] = React.useState(false);
 
   React.useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const handler = () => setMotionOK(!mq.matches);
-    handler();
-    mq.addEventListener?.("change", handler);
-    return () => mq.removeEventListener?.("change", handler);
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const nav = navigator as NavigatorWithMemory;
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const evaluate = () => {
+      const prefersReducedMotion = mediaQuery.matches;
+      const connection = nav.connection;
+      const saveData = Boolean(connection?.saveData);
+      const deviceMemory = typeof nav.deviceMemory === "number" ? nav.deviceMemory : undefined;
+      const lowMemory = typeof deviceMemory === "number" && deviceMemory <= 4;
+      const disableParam = new URLSearchParams(window.location.search).has("novideo");
+      let embedded = false;
+      try {
+        embedded = typeof window.top !== "undefined" && window.top !== window.self;
+      } catch {
+        embedded = true;
+      }
+      setShouldPlayVideo(!(prefersReducedMotion || saveData || lowMemory || disableParam || embedded));
+    };
+
+    evaluate();
+
+    const handleChange = () => evaluate();
+    mediaQuery.addEventListener?.("change", handleChange);
+    nav.connection?.addEventListener?.("change", handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener?.("change", handleChange);
+      nav.connection?.removeEventListener?.("change", handleChange);
+    };
   }, []);
 
   return (
     <div className={`pointer-events-none absolute inset-0 -z-10 ${className}`}>
-      {motionOK ? (
+      {shouldPlayVideo ? (
         <video
           className="absolute inset-0 h-full w-full object-cover"
           src={src}
