@@ -11,6 +11,11 @@ const emailRegex = /^\S+@\S+\.\S+$/;
 const pinRegex = /^\d{6}$/;
 
 export function LoginForm() {
+  const emailId = "login-email";
+  const emailLabelId = "login-email-label";
+  const passwordId = "login-password";
+  const passwordLabelId = "login-password-label";
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState<string | null>(null);
@@ -46,13 +51,14 @@ export function LoginForm() {
   return (
     <form onSubmit={onSubmit} className="mt-6 grid gap-4 text-white">
       <div className="grid gap-2">
-        <Label htmlFor="email" className="text-white/90">
+        <Label id={emailLabelId} htmlFor={emailId} className="text-white/90">
           Email
         </Label>
         <Input
-          id="email"
+          id={emailId}
           type="email"
           autoComplete="email"
+          aria-labelledby={emailLabelId}
           placeholder="you@company.com"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
@@ -60,13 +66,14 @@ export function LoginForm() {
         />
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="password" className="text-white/90">
+        <Label id={passwordLabelId} htmlFor={passwordId} className="text-white/90">
           Password
         </Label>
         <Input
-          id="password"
+          id={passwordId}
           type="password"
           autoComplete="current-password"
+          aria-labelledby={passwordLabelId}
           placeholder="6-digit password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
