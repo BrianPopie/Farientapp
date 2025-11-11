@@ -11,13 +11,13 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider>
       <ProtectedRouteBoundary>
-        <div className="flex min-h-screen bg-[rgb(var(--bg))] text-[rgb(var(--text))]">
+        <div className="flex min-h-screen bg-background text-foreground">
           <Sidebar />
           <div className="flex flex-1 flex-col">
             <Topbar />
-            <main className="relative flex-1 overflow-y-auto bg-[rgb(var(--card))]">
+            <main className="relative flex-1 overflow-y-auto bg-background">
               <FocusVignette />
-              <div className="relative z-10 mx-auto w-full max-w-[1280px] px-6 py-6">{children}</div>
+              <div className="relative z-10 mx-auto w-full max-w-[1500px] px-6 py-8">{children}</div>
             </main>
           </div>
         </div>

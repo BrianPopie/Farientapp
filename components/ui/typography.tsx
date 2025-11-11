@@ -18,7 +18,7 @@ export function PageHeading<T extends ElementType = "h1">({
   const Component = (as ?? "h1") as ElementType;
   return (
     <Component
-      className={cn("text-[2rem] md:text-[2.4rem] font-semibold leading-[1.1] text-text tracking-tight", className)}
+      className={cn("text-3xl md:text-[2.75rem] font-semibold leading-tight tracking-tight text-foreground", className)}
       {...props}
     >
       {children}
@@ -35,7 +35,7 @@ export function SectionHeading<T extends ElementType = "h2">({
   const Component = (as ?? "h2") as ElementType;
   return (
     <Component
-      className={cn("text-[1.45rem] font-semibold leading-tight text-text tracking-tight", className)}
+      className={cn("text-xl md:text-2xl font-semibold leading-tight tracking-tight text-foreground", className)}
       {...props}
     >
       {children}
@@ -51,12 +51,24 @@ export function BodyText({ children, className, muted = false, ...props }: BodyT
   return (
     <p
       className={cn(
-        "text-[0.95rem] leading-6 text-text",
-        muted && "text-text-muted",
-        "tracking-[0.01em]",
+        "text-base leading-7 text-foreground tracking-[0.01em]",
+        muted && "text-muted-foreground",
         className
       )}
       {...props}
+    >
+      {children}
+    </p>
+  );
+}
+
+export function Kicker({ children, className }: HTMLAttributes<HTMLParagraphElement>) {
+  return (
+    <p
+      className={cn(
+        "text-[0.7rem] font-semibold uppercase tracking-[0.4em] text-muted-foreground",
+        className
+      )}
     >
       {children}
     </p>

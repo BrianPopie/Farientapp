@@ -40,16 +40,29 @@ function TsrMiniInner(props: Props) {
         <AreaChart data={data} margin={{ top: 20, right: 20, left: -25, bottom: 0 }}>
           <defs>
             <linearGradient id="tsr" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#ffd369" stopOpacity={0.5} />
-              <stop offset="95%" stopColor="#ffd369" stopOpacity={0} />
+              <stop offset="5%" stopColor="rgb(var(--chart-2))" stopOpacity={0.45} />
+              <stop offset="95%" stopColor="rgb(var(--chart-2))" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-          <XAxis dataKey="year" stroke="rgba(255,255,255,0.4)" />
-          <YAxis stroke="rgba(255,255,255,0.4)" />
-          <Tooltip contentStyle={{ background: "rgba(12,14,20,0.8)", border: "1px solid rgba(255,255,255,0.1)" }} />
-          <Area type="monotone" dataKey="tsr" stroke="#ffd369" fillOpacity={1} fill="url(#tsr)" />
-          <Line type="monotone" dataKey="comp" stroke="#5d5fe5" strokeWidth={2} dot={{ r: 3 }} />
+          <CartesianGrid strokeDasharray="3 3" stroke="rgb(var(--border) / 0.45)" />
+          <XAxis dataKey="year" stroke="rgb(var(--muted-foreground) / 0.8)" />
+          <YAxis stroke="rgb(var(--muted-foreground) / 0.8)" />
+          <Tooltip
+            contentStyle={{
+              background: "rgba(8,10,18,0.85)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              borderRadius: "0.75rem",
+              color: "rgb(var(--card-foreground))"
+            }}
+          />
+          <Area type="monotone" dataKey="tsr" stroke="rgb(var(--chart-2))" fillOpacity={1} fill="url(#tsr)" />
+          <Line
+            type="monotone"
+            dataKey="comp"
+            stroke="rgb(var(--chart-1))"
+            strokeWidth={2}
+            dot={{ r: 3, stroke: "rgb(var(--chart-1))", fill: "rgb(var(--chart-1))" }}
+          />
         </AreaChart>
       </ResponsiveContainer>
     </div>

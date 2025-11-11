@@ -6,32 +6,36 @@ import { BoardStat } from "@/components/metrics/BoardStat";
 import { KpiCard } from "@/components/metrics/KpiCard";
 import { TsrMini } from "@/components/charts/TsrMini";
 import { AlertTriangle, Bell, FileText, Layers } from "lucide-react";
+import { PageHeading, BodyText, Kicker } from "@/components/ui/typography";
+import { md } from "@/lib/docsSync";
 
 export const revalidate = 120;
+
+const overviewSubtitle = md(
+  "overview-subtitle",
+  "Farient transforms DEF 14As, 10-K/Qs, and policy packs into structured insights so analysts can defend every metric in front of the board."
+);
 
 export default function DashboardPage() {
   return (
     <div className="grid grid-cols-1 gap-8 md:grid-cols-12">
-      <GlassCard className="md:col-span-7 min-h-[320px] p-8 lg:p-10">
+      <GlassCard className="md:col-span-7 min-h-[320px] p-8">
         <div className="flex h-full flex-col gap-6">
-          <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-text/70 dark:text-white/60">
-              Executive compensation intelligence
-            </p>
-            <h1 className="text-3xl font-semibold text-text dark:text-white">Deal Intelligence Dashboard</h1>
-            <p className="text-sm text-text/80 dark:text-white/70">
-              Farient transforms DEF 14As, 10-K/Qs, and policy packs into structured insights so analysts can defend every
-              metric in front of the board.
-            </p>
+          <div className="space-y-3">
+            <Kicker>Executive compensation intelligence</Kicker>
+            <PageHeading>Deal Intelligence Dashboard</PageHeading>
+            <BodyText muted className="max-w-3xl">
+              {overviewSubtitle}
+            </BodyText>
           </div>
           <div className="flex flex-wrap gap-3">
             <Link href="/filings" prefetch={false} className="inline-flex">
-              <Button className="gap-2 bg-[rgb(var(--accent))] text-white shadow-[var(--soft-shadow)] hover:opacity-90">
+              <Button className="gap-2 focus-ring">
                 Launch ingestion →
               </Button>
             </Link>
             <Link href="/reports" prefetch={false} className="inline-flex">
-              <Button variant="secondary" className="bg-white/10 text-white hover:bg-white/20">
+              <Button variant="secondary" className="focus-ring bg-card/70 hover:bg-card">
                 Preview board pack
               </Button>
             </Link>
@@ -47,8 +51,8 @@ export default function DashboardPage() {
       <GlassCard className="md:col-span-5 min-h-[320px] overflow-hidden p-0">
         <div className="flex items-center justify-between px-6 py-5">
           <div>
-            <p className="text-sm font-medium text-text dark:text-white">TSR vs CEO Total Comp</p>
-            <p className="text-xs text-text/60 dark:text-white/60">Last updated 3h ago</p>
+            <p className="text-sm font-medium text-foreground">TSR vs CEO Total Comp</p>
+            <p className="text-xs text-muted-foreground">Last updated 3h ago</p>
           </div>
           <div className="space-x-2">
             <Badge
@@ -97,27 +101,21 @@ export default function DashboardPage() {
       />
 
       <GlassCard className="md:col-span-4 min-h-[260px] p-6">
-        <div className="flex items-center gap-2 text-sm font-semibold text-text dark:text-white">
+        <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
           <Bell className="h-4 w-4 text-sky-400" />
           Filings pipeline
         </div>
-        <p className="mt-3 text-sm text-text/80 dark:text-white/70">
+        <p className="mt-3 text-sm text-muted-foreground">
           28 issuers queued with SLA &lt; 30 mins. Next up: Aurelius Corp (DEF 14A) and Northwind Energy (8-K).
         </p>
-        <Button
-          variant="outline"
-          className="mt-4 border-border bg-white text-text hover:bg-white/90 dark:border-white/20 dark:bg-white/5 dark:text-white dark:hover:bg-white/10"
-        >
-          View workflow
-        </Button>
       </GlassCard>
 
       <GlassCard className="md:col-span-4 min-h-[260px] p-6">
-        <div className="flex items-center gap-2 text-sm font-semibold text-text dark:text-white">
+        <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
           <AlertTriangle className="h-4 w-4 text-amber-500" />
           Alert feed
         </div>
-        <ul className="mt-3 space-y-3 text-sm text-text/80 dark:text-white/75">
+        <ul className="mt-3 space-y-3 text-sm text-muted-foreground">
           <li>3 policy deltas require reviewer sign-off.</li>
           <li>ESG clause updated for Glass Lewis readiness.</li>
           <li>New clawback language flagged in Proxy draft.</li>
@@ -125,11 +123,11 @@ export default function DashboardPage() {
       </GlassCard>
 
       <GlassCard className="md:col-span-4 min-h-[260px] p-6">
-        <div className="flex items-center gap-2 text-sm font-semibold text-text dark:text-white">
+        <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
           <FileText className="h-4 w-4 text-emerald-400" />
           Board prep
         </div>
-        <p className="mt-3 text-sm text-text/80 dark:text-white/70">
+        <p className="mt-3 text-sm text-muted-foreground">
           Docs + slides synced for 7 templates. Export the latest board-ready pack with embedded citations.
         </p>
       </GlassCard>
