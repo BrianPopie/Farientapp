@@ -68,22 +68,27 @@ export default function VideoBackground({ src = "/animation.mp4", poster, classN
       {shouldPlayVideo ? (
         <video
           className="absolute inset-0 h-full w-full object-cover"
-          src={src}
           autoPlay
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="auto"
           {...(poster ? { poster } : {})}
-        />
+        >
+          <source src={src} type="video/mp4" />
+        </video>
       ) : (
         <div
           className="absolute inset-0 h-full w-full bg-cover bg-center"
-          style={poster ? { backgroundImage: `url(${poster})` } : { background: "radial-gradient(circle at 30% 20%, rgba(99,102,241,0.35), transparent 55%)" }}
+          style={
+            poster
+              ? { backgroundImage: `url(${poster})` }
+              : { background: "radial-gradient(circle at 30% 20%, rgba(99,102,241,0.35), transparent 55%)" }
+          }
           aria-hidden
         />
       )}
-      <div className="absolute inset-0 bg-[radial-gradient(120%_120%_at_80%_-20%,rgba(0,0,0,.35)_0%,rgba(0,0,0,.65)_40%,rgba(0,0,0,.85)_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(120%_120%_at_80%_-20%,rgba(0,0,0,.25)_0%,rgba(0,0,0,.55)_40%,rgba(0,0,0,.75)_100%)]" />
     </div>
   );
 }

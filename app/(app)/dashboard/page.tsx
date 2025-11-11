@@ -1,119 +1,130 @@
-// Server-rendered dashboard that streams the chart via a tiny client island.
-import Link from "next/link";
-import { Suspense } from "react";
-import { ArrowRight, Database, FileStack, Presentation } from "lucide-react";
-import { StatCard } from "@/components/StatCard";
+import { GlassCard } from "@/components/ui/GlassCard";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrendPoint } from "@/lib/types";
-import { DataBadge } from "@/components/DataBadge";
-import { PageHeading, BodyText, SectionHeading } from "@/components/ui/typography";
-import { TrendChartIsland } from "./trend-chart-island";
-import { RenderProbe } from "@/components/RenderProbe";
+import { Badge } from "@/components/ui/badge";
+import { BoardStat } from "@/components/metrics/BoardStat";
+import { KpiCard } from "@/components/metrics/KpiCard";
+import { TsrMini } from "@/components/charts/TsrMini";
+import { AlertTriangle, Bell, FileText, Layers } from "lucide-react";
 
-export const dynamic = "force-static";
-export const revalidate = 60;
-
-const heroTrend: TrendPoint[] = [
-  { year: 2020, tsrPct: -3, compUSD: 8400000 },
-  { year: 2021, tsrPct: 28, compUSD: 9800000 },
-  { year: 2022, tsrPct: 12, compUSD: 10500000 },
-  { year: 2023, tsrPct: 4, compUSD: 11200000 },
-  { year: 2024, tsrPct: 18, compUSD: 13200000 }
-];
-
-const insightCards = [
-  { title: "Filings pipeline", detail: "28 issuers queued with SLA < 30 mins." },
-  { title: "Alert feed", detail: "3 policy deltas require reviewer sign-off." },
-  { title: "Board prep", detail: "Docs + slides synced for 7 templates." }
-];
+export const revalidate = 120;
 
 export default function DashboardPage() {
   return (
-    <>
-      <RenderProbe label="dashboard/page" />
-      <section
-        className="grid gap-8 xl:grid-cols-[2fr_1.2fr] text-text"
-        style={{ contentVisibility: "auto", containIntrinsicSize: "600px" }}
-      >
-        <div className="rounded-2xl border border-border bg-surface p-8 shadow-sm">
-          <DataBadge tone="info">Executive Compensation Intelligence</DataBadge>
-          <PageHeading className="mt-4 text-text">Deal Intelligence Dashboard</PageHeading>
-          <BodyText muted className="mt-3 text-base xl:text-lg">
-            Normalize fragmented comp for C-suite minus CEO, P&L leaders, and critical technical roles; then benchmark, assess policy
-            risk, and generate board-ready outputs with traceable citations.
-          </BodyText>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Button asChild className="gap-2 text-base">
-              <Link href="/filings" prefetch={false}>
-                Launch ingestion
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
+      <GlassCard className="md:col-span-7 p-6">
+        <div className="flex flex-col gap-6">
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-white/60">
+              Executive compensation intelligence
+            </p>
+            <h1 className="text-3xl font-semibold text-white">Deal Intelligence Dashboard</h1>
+            <p className="text-sm text-white/70">
+              Farient transforms DEF 14As, 10-K/Qs, and policy packs into structured insights so analysts can defend every
+              metric in front of the board.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Button className="gap-2 bg-[rgb(var(--accent))] text-white shadow-[var(--soft-shadow)] hover:opacity-90">
+              Launch ingestion →
             </Button>
-            <Button variant="ghost" asChild className="text-base text-text-muted hover:text-text">
-              <Link href="/reports" prefetch={false}>
-                Preview board pack
-              </Link>
+            <Button variant="secondary" className="bg-white/10 text-white hover:bg-white/20">
+              Preview board pack
             </Button>
           </div>
-          <div className="mt-8 grid gap-5 sm:grid-cols-3">
-            {[
-              { label: "Filings normalized", value: "+1.2M rows" },
-              { label: "Extraction accuracy", value: "98.4%" },
-              { label: "Analyst NPS", value: "+54" }
-            ].map((item) => (
-              <div key={item.label} className="rounded-xl border border-border bg-muted/50 p-4 text-center">
-                <p className="text-xs uppercase tracking-wide text-text-muted">{item.label}</p>
-                <p className="text-2xl font-semibold text-text">{item.value}</p>
-              </div>
-            ))}
+          <div className="grid gap-4 sm:grid-cols-3">
+            <BoardStat label="Filings ingested" value="+1.2M rows" />
+            <BoardStat label="Extraction accuracy" value="98.4%" />
+            <BoardStat label="Analyst hits" value="+54" />
           </div>
         </div>
+      </GlassCard>
 
-        <Card className="rounded-2xl border border-border bg-surface shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-xl font-semibold text-text">TSR vs CEO Total Comp</CardTitle>
-          </CardHeader>
-          <CardContent className="min-w-0 min-h-0">
-            <Suspense
-              fallback={<div className="h-[320px] rounded-2xl border border-dashed border-border/60 bg-muted/40 animate-pulse" />}
-            >
-              <TrendChartIsland data={heroTrend} />
-            </Suspense>
-          </CardContent>
-        </Card>
-      </section>
-
-      <section
-        className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4 text-text"
-        style={{ contentVisibility: "auto", containIntrinsicSize: "320px" }}
-      >
-        <StatCard title="Cycle time" value="4m 12s" description="Avg workflow" delta={{ label: "-63% vs manual", positive: true }} />
-        <StatCard title="Traceable metrics" value="312" description="Active citations" icon={<Database className="h-5 w-5" />} />
-        <StatCard title="Filings queued" value="28" description="Across 10 issuers" icon={<FileStack className="h-5 w-5" />} />
-        <StatCard
-          title="Non-CEO roles covered"
-          value="7"
-          description="C-Suite-minus-CEO, P&L, Critical Tech, Successors"
-          icon={<Presentation className="h-5 w-5" />}
-        />
-      </section>
-
-      <section
-        className="grid gap-6 md:grid-cols-2 xl:grid-cols-3 text-text"
-        style={{ contentVisibility: "auto", containIntrinsicSize: "420px" }}
-      >
-        {insightCards.map((insight) => (
-          <div key={insight.title} className="rounded-2xl border border-border bg-surface p-6 shadow-sm">
-            <SectionHeading as="p" className="text-lg font-medium text-text">
-              {insight.title}
-            </SectionHeading>
-            <BodyText muted className="mt-2 text-sm">
-              {insight.detail}
-            </BodyText>
+      <GlassCard className="md:col-span-5 p-0">
+        <div className="flex items-center justify-between px-5 py-4">
+          <div>
+            <p className="text-sm font-medium text-white">TSR vs CEO Total Comp</p>
+            <p className="text-xs text-white/60">Last updated 3h ago</p>
           </div>
-        ))}
-      </section>
-    </>
+          <div className="space-x-2">
+            <Badge variant="outline" className="border-white/20 bg-white/5 text-white">
+              TSR %
+            </Badge>
+            <Badge variant="outline" className="border-white/20 bg-white/5 text-white">
+              CEO pay
+            </Badge>
+          </div>
+        </div>
+        <TsrMini className="px-2 pb-4" />
+      </GlassCard>
+
+      <KpiCard
+        label="Cycle time"
+        value="4m 12s"
+        delta="+63% faster vs manual"
+        intent="good"
+        className="md:col-span-3"
+      />
+      <KpiCard
+        label="Trackable metrics"
+        value="312"
+        icon={<Layers className="h-4 w-4 text-white/40" />}
+        className="md:col-span-3 opacity-90"
+      />
+      <KpiCard
+        label="Filings queued"
+        value="28"
+        icon={<FileText className="h-4 w-4 text-white/40" />}
+        className="md:col-span-3 opacity-100"
+      />
+      <KpiCard
+        label="Alerts"
+        value="7"
+        delta="Requires sign-off"
+        intent="warn"
+        icon={<AlertTriangle className="h-4 w-4 text-white/40" />}
+        className="md:col-span-3 opacity-80"
+      />
+
+      <GlassCard className="md:col-span-4 p-5">
+        <div className="flex items-center gap-2 text-sm font-semibold text-white">
+          <Bell className="h-4 w-4 text-white/50" />
+          Filings pipeline
+        </div>
+        <p className="mt-3 text-sm text-white/70">
+          28 issuers queued with SLA &lt; 30 mins. Next up: Aurelius Corp (DEF 14A) and Northwind Energy (8-K).
+        </p>
+        <Button variant="outline" className="mt-4 bg-white/5 text-white hover:bg-white/10">
+          View workflow
+        </Button>
+      </GlassCard>
+
+      <GlassCard className="md:col-span-4 p-5">
+        <div className="flex items-center gap-2 text-sm font-semibold text-white">
+          <AlertTriangle className="h-4 w-4 text-white/50" />
+          Alert feed
+        </div>
+        <ul className="mt-3 space-y-3 text-sm text-white/75">
+          <li>3 policy deltas require reviewer sign-off.</li>
+          <li>ESG clause updated for Glass Lewis readiness.</li>
+          <li>New clawback language flagged in Proxy draft.</li>
+        </ul>
+      </GlassCard>
+
+      <GlassCard className="md:col-span-4 p-5">
+        <div className="flex items-center gap-2 text-sm font-semibold text-white">
+          <FileText className="h-4 w-4 text-white/50" />
+          Board prep
+        </div>
+        <p className="mt-3 text-sm text-white/70">
+          Docs + slides synced for 7 templates. Export the latest board-ready pack with embedded citations.
+        </p>
+        <div className="mt-4 flex gap-3">
+          <Button className="bg-[rgb(var(--accent))] text-white hover:opacity-90">Export slides</Button>
+          <Button variant="secondary" className="bg-white/10 text-white hover:bg-white/20">
+            Export docs
+          </Button>
+        </div>
+      </GlassCard>
+    </div>
   );
 }

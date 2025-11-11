@@ -2,6 +2,7 @@
 
 export const LS_KEY = "farient_ai_inputs_v1";
 export const LS_OUT = "farient_ai_output_v1";
+export const LS_AUTO = "farient_ai_autoprompt_v1";
 
 export function writeJSON<T>(key: string, value: T) {
   if (typeof window === "undefined") return;

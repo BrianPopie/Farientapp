@@ -1,10 +1,10 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Inputs, Output } from "@/lib/farient/types";
 import { systemPrompt } from "@/lib/farient/prompt";
-import { LS_KEY, LS_OUT, readJSON } from "../ls";
-import type { BuilderState } from "../OutputBuilder/state";
+import { LS_KEY, LS_OUT, LS_AUTO, readJSON, removeKey } from "../ls";
+import type { BuilderState, RoleBandSelection } from "../OutputBuilder/state";
 import { ROLE_BANDS } from "@/lib/roles";
 import { Section } from "../Section";
 
@@ -19,6 +19,13 @@ export type ChatPanelProps = {
   onAsk: (payload: AskPayload) => Promise<string>;
 };
 
+type AutoPromptPayload = {
+  createdAt: number;
+  inputs: Required<Inputs>;
+  output: Output;
+  roleBand?: RoleBandSelection;
+};
+
 export default function ChatPanel({ onAsk }: ChatPanelProps) {
   const [builderState, setBuilderState] = useState<BuilderState | undefined>();
   const [bands, setBands] = useState<Output | undefined>();
@@ -26,10 +33,13 @@ export default function ChatPanel({ onAsk }: ChatPanelProps) {
   const [draft, setDraft] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [autoPrompt, setAutoPrompt] = useState<AutoPromptPayload | null>(null);
+  const handledAutoRef = useRef<number>(0);
 
   useEffect(() => {
     setBuilderState(readJSON<BuilderState>(LS_KEY));
     setBands(readJSON<Output>(LS_OUT));
+    setAutoPrompt(readJSON<AutoPromptPayload>(LS_AUTO) ?? null);
   }, []);
 
   useEffect(() => {
@@ -39,6 +49,9 @@ export default function ChatPanel({ onAsk }: ChatPanelProps) {
       }
       if (event.key === LS_OUT) {
         setBands(event.newValue ? (JSON.parse(event.newValue) as Output) : undefined);
+      }
+      if (event.key === LS_AUTO) {
+        setAutoPrompt(event.newValue ? (JSON.parse(event.newValue) as AutoPromptPayload) : null);
       }
     };
     window.addEventListener("storage", handler);
@@ -109,13 +122,13 @@ export default function ChatPanel({ onAsk }: ChatPanelProps) {
   }, [bands]);
 
   const handleSend = useCallback(
-    async (content: string) => {
+    async (content: string, options?: { force?: boolean; silent?: boolean }) => {
       const trimmed = content.trim();
-      if (!trimmed || pending) return;
+      if (!trimmed || (!options?.force && pending)) return;
       const userMessage: Message = { role: "user", content: trimmed };
       const history = [...messages, userMessage];
       setMessages(history);
-      setDraft("");
+      if (!options?.silent) setDraft("");
       setPending(true);
       setError(null);
       try {
@@ -133,13 +146,24 @@ export default function ChatPanel({ onAsk }: ChatPanelProps) {
     [bands, inputs, messages, onAsk, pending, roleBandSummary]
   );
 
+  useEffect(() => {
+    if (!autoPrompt || !contextReady) return;
+    if (handledAutoRef.current >= autoPrompt.createdAt) return;
+    const autopMessage = buildAutoPromptMessage(autoPrompt);
+    if (!autopMessage) return;
+    handledAutoRef.current = autoPrompt.createdAt;
+    removeKey(LS_AUTO);
+    setAutoPrompt(null);
+    void handleSend(autopMessage, { force: true, silent: true });
+  }, [autoPrompt, contextReady, handleSend]);
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     void handleSend(draft);
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex min-h-0 flex-col gap-6">
       <Section title="Context" subtitle="Persisted inputs + computed bands">
         {heroChips.length ? (
           <div className="flex flex-wrap gap-3">
@@ -190,9 +214,9 @@ export default function ChatPanel({ onAsk }: ChatPanelProps) {
         </div>
       ) : null}
 
-      <Section title="Conversation" subtitle="Chat with Farient using the stored context.">
-        <div className="card space-y-3 p-4">
-          <div className="max-h-[520px] space-y-3 overflow-y-auto pr-1">
+      <Section title="Conversation" subtitle="Chat with Farient using the stored context." className="flex min-h-0 flex-col">
+        <div className="card flex min-h-0 flex-col space-y-3 p-4">
+          <div className="flex-1 min-h-0 space-y-3 overflow-y-auto pr-1">
             {messages.length === 0 ? (
               <p className="text-sm text-slate-600 dark:text-slate-400">
                 No conversation yet. Kick things off with a quick workflow or type a question below.
@@ -243,6 +267,54 @@ export default function ChatPanel({ onAsk }: ChatPanelProps) {
       </Section>
     </div>
   );
+}
+
+function buildAutoPromptMessage(payload: AutoPromptPayload) {
+  if (!payload?.inputs || !payload?.output) return null;
+  const { inputs, output, roleBand } = payload;
+  const lines: string[] = [
+    "Create a Farient-style compensation insight using the latest builder run. Keep the tone board-ready and explain pay mix tradeoffs plus recommended actions.",
+    "",
+    "### Builder Snapshot"
+  ];
+
+  const snapshot = [
+    roleBand ? `Role band: ${describeRoleBand(roleBand)}` : null,
+    `Company size: ${inputs.company}`,
+    `Location tier: ${inputs.location}`,
+    `Parity rule: ${inputs.parity}`,
+    `Cash vs equity mix: ${inputs.mix}`,
+    `Role scope: ${inputs.role.directs} directs; ${inputs.role.hasPNL ? "owns P&L" : "no P&L ownership"}`
+  ].filter(Boolean) as string[];
+
+  lines.push(...snapshot.map((entry) => `- ${entry}`));
+  lines.push("", "### Generated Bands");
+  lines.push(
+    `- Base salary: $${output.baseMin.toLocaleString()} - $${output.baseMax.toLocaleString()}`,
+    `- Bonus target: ${output.bonusPct}% of base`,
+    `- LTI annualized: $${output.ltiAnnual.toLocaleString()}`
+  );
+
+  if (output.notes?.length) {
+    lines.push("", "### Notes / Tradeoffs");
+    output.notes.forEach((note) => lines.push(`- ${note}`));
+  }
+
+  lines.push(
+    "",
+    "### Deliverable",
+    "- Provide a concise benchmarking summary, call out material gaps vs peers, and list 2-3 next actions or workflows.",
+    "- Reference the stored bands directly; cite mock sources if needed."
+  );
+
+  return lines.join("\n");
+}
+
+function describeRoleBand(selection?: RoleBandSelection) {
+  if (!selection) return undefined;
+  const displayLabel =
+    ROLE_BANDS.find((band) => band.key === selection.bandKey)?.label ?? selection.bandKey;
+  return `${displayLabel} - ${selection.roleLabel}`;
 }
 
 function buildSystemPrompt(inputs?: Inputs, bands?: Output, roleBandSummary?: string) {
@@ -314,3 +386,4 @@ function formatAssistantContent(text: string) {
   flushList();
   return nodes.length ? nodes : [<p key="fallback">{text}</p>];
 }
+

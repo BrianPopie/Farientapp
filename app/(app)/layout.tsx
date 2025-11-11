@@ -1,7 +1,9 @@
 import type { ReactNode } from "react";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import ProtectedRouteBoundary from "@/components/ProtectedRouteBoundary";
-import { Sidebar } from "@/components/Sidebar";
+import { Sidebar } from "@/components/shell/Sidebar";
+import { Topbar } from "@/components/shell/Topbar";
+import { FocusVignette } from "@/components/ui/FocusVignette";
 
 export const runtime = "nodejs";
 
@@ -9,9 +11,15 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider>
       <ProtectedRouteBoundary>
-        <div className="flex min-h-screen bg-bg text-text">
+        <div className="flex min-h-screen bg-[rgb(var(--bg))] text-[rgb(var(--text))]">
           <Sidebar />
-          <main className="flex flex-1 flex-col bg-bg">{children}</main>
+          <div className="flex flex-1 flex-col">
+            <Topbar />
+            <main className="relative flex-1 overflow-y-auto bg-[rgb(var(--card))]">
+              <FocusVignette />
+              <div className="relative z-10 mx-auto w-full max-w-[1280px] px-6 py-6">{children}</div>
+            </main>
+          </div>
         </div>
       </ProtectedRouteBoundary>
     </ThemeProvider>

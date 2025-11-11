@@ -15,7 +15,7 @@ import StepLocation from "./StepLocation";
 import StepParity from "./StepParity";
 import StepCashEquity from "./StepCashEquity";
 import OutputTable from "./OutputTable";
-import { LS_KEY, LS_OUT, readJSON, writeJSON, removeKey } from "../ls";
+import { LS_KEY, LS_OUT, LS_AUTO, readJSON, writeJSON, removeKey } from "../ls";
 import type { BuilderState, RoleBandSelection } from "./state";
 import { initialBuilderState } from "./state";
 import { Section } from "../Section";
@@ -140,6 +140,12 @@ export default function OutputBuilder({ onGenerate }: OutputBuilderProps) {
         const result = await onGenerate(payload);
         setOutput(result);
         writeJSON(LS_OUT, result);
+        writeJSON(LS_AUTO, {
+          createdAt: Date.now(),
+          inputs: payload,
+          output: result,
+          roleBand: state.roleBand
+        });
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to generate bands.");
       }
@@ -199,9 +205,9 @@ export default function OutputBuilder({ onGenerate }: OutputBuilderProps) {
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-5">
       <Section title="Progress" subtitle="Step through each input bucket to unlock the Farient band.">
-        <ol className="flex flex-wrap gap-3 text-sm">
+        <ol className="flex flex-wrap gap-2 text-sm">
           {steps.map((step, idx) => {
             const status = idx < stepIndex ? "complete" : idx === stepIndex ? "current" : "upcoming";
             return (
@@ -224,10 +230,10 @@ export default function OutputBuilder({ onGenerate }: OutputBuilderProps) {
             type="button"
             onClick={handlePrimary}
             disabled={isPending || (stepIndex === steps.length - 1 && !complete)}
-            className="btn btn-primary disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {stepIndex === steps.length - 1 ? (isPending ? "Generating..." : "Generate bands") : "Next"}
-          </button>
+          className="btn btn-primary disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {stepIndex === steps.length - 1 ? (isPending ? "Generating..." : "Generate Insights") : "Next"}
+        </button>
           <button
             type="button"
             onClick={goToPrev}
