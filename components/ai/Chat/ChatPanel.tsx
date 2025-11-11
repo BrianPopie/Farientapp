@@ -6,13 +6,12 @@ import { systemPrompt } from "@/lib/farient/prompt";
 import { LS_KEY, LS_OUT, LS_AUTO, readJSON, removeKey } from "../ls";
 import type { BuilderState, RoleBandSelection } from "../OutputBuilder/state";
 import { ROLE_BANDS } from "@/lib/roles";
-import type { AssistantPanelModel, CopilotMessage, QuickWorkflowChip } from "../Copilot/types";
+import type { AssistantPanelModel, CopilotMessage } from "../Copilot/types";
 import { CopilotShell } from "../Copilot/CopilotShell";
 import { Conversation } from "../Copilot/Conversation";
 import { ContextRail } from "../Copilot/ContextRail";
 import { CommandBar } from "../Copilot/CommandBar";
-import { Chips } from "../Copilot/Chips";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { stripMarkdownNoise } from "@/lib/text/sanitize";
 
 type MessagePayload = { role: "user" | "assistant"; content: string };
 
@@ -100,12 +99,6 @@ export default function ChatPanel({ onAsk }: ChatPanelProps) {
     return Boolean(inputs.company && hasRole && inputs.location && inputs.parity && inputs.mix && bands);
   }, [inputs, bands, builderState?.roleBand]);
 
-  const quickWorkflows = useMemo<QuickWorkflowChip[]>(() => buildQuickWorkflows(inputs, bands, builderState?.roleBand), [
-    inputs,
-    bands,
-    builderState?.roleBand
-  ]);
-
   const commandSuggestions = useMemo(() => {
     if (!contextReady || !roleBandSummary) {
       return ["Benchmark CFO vs mid-cap peers", "Explain pay-mix tradeoffs", "Prep comp committee summary"];
@@ -128,11 +121,15 @@ export default function ChatPanel({ onAsk }: ChatPanelProps) {
   }, [messages, inputs, bands, builderState?.roleBand]);
 
   const handleSend = useCallback(
-    async (content: string, options?: { force?: boolean; silent?: boolean }) => {
+    async (
+      content: string,
+      options?: { force?: boolean; silent?: boolean; summaryMode?: boolean }
+    ) => {
       const trimmed = content.trim();
       if (!trimmed || (!options?.force && pending)) return;
 
-      const userMessage: CopilotMessage = { id: nextMessageId(), role: "user", content: trimmed };
+      const payloadContent = options?.summaryMode ? `TL;DR summary: ${trimmed}` : trimmed;
+      const userMessage: CopilotMessage = { id: nextMessageId(), role: "user", content: payloadContent };
       const historyWithUser = [...messagesRef.current, userMessage];
       messagesRef.current = historyWithUser;
       setMessages(historyWithUser);
@@ -186,20 +183,14 @@ export default function ChatPanel({ onAsk }: ChatPanelProps) {
     if (!autoPrompt || !contextReady) return;
     if (handledAutoRef.current >= autoPrompt.createdAt) return;
     const autopMessage = buildAutoPromptMessage(autoPrompt);
-    if (!autopMessage) return;
+    const summaryPrompt = buildAutoSummaryPrompt(autoPrompt);
+    if (!autopMessage || !summaryPrompt) return;
     handledAutoRef.current = autoPrompt.createdAt;
     removeKey(LS_AUTO);
     setAutoPrompt(null);
     void handleSend(autopMessage, { force: true, silent: true });
+    void handleSend(summaryPrompt, { force: true, silent: true, summaryMode: true });
   }, [autoPrompt, contextReady, handleSend]);
-
-  const chipsNode = (
-    <Chips
-      items={quickWorkflows}
-      disabled={!contextReady || pending}
-      onSelect={(chip) => handleSend(chip.prompt, { force: true })}
-    />
-  );
 
   const conversationNode = (
     <Conversation messages={messages} pending={pending} assistantModels={assistantModels} />
@@ -224,44 +215,7 @@ export default function ChatPanel({ onAsk }: ChatPanelProps) {
     </div>
   );
 
-  return (
-    <CopilotShell
-      headerAction={<ThemeToggle />}
-      chips={chipsNode}
-      conversation={conversationNode}
-      contextRail={contextRailNode}
-      commandBar={commandBarNode}
-    />
-  );
-}
-
-function buildQuickWorkflows(inputs?: Inputs, bands?: Output, roleBand?: RoleBandSelection): QuickWorkflowChip[] {
-  const role = roleBand?.roleLabel ?? "executive role";
-  const bandWindow = bands
-    ? `$${bands.baseMin.toLocaleString()} – $${bands.baseMax.toLocaleString()}`
-    : "the recommended band";
-  const company = inputs?.company ?? "mid-cap peer";
-
-  return [
-    {
-      id: "benchmark",
-      label: "Benchmark vs peers",
-      helper: "Compare pay mix + TSR",
-      prompt: `Benchmark ${role} compensation vs ${company} peers and highlight where ${bandWindow} sits among quartiles. Include pay-mix vs TSR commentary.`
-    },
-    {
-      id: "p4p",
-      label: "Pay-for-performance alignment",
-      helper: "Last 3 years",
-      prompt: `Evaluate pay-for-performance alignment for the ${role}. Use the stored bands, explain whether the current mix rewards TSR, and flag any concerns for the comp committee.`
-    },
-    {
-      id: "tradeoffs",
-      label: "Explain tradeoffs",
-      helper: "Cash vs equity",
-      prompt: `Explain cash vs equity tradeoffs for the ${role} using the stored mix preference and parity guardrail. Recommend a mix that balances attraction and retention.`
-    }
-  ];
+  return <CopilotShell conversation={conversationNode} contextRail={contextRailNode} commandBar={commandBarNode} />;
 }
 
 function buildAssistantPanelBase(
@@ -299,13 +253,19 @@ function buildAssistantPanelBase(
 
 function buildAssistantPanelModel(content: string, base: ReturnType<typeof buildAssistantPanelBase>) {
   const sections = parseSections(content);
-  const title = sections.headings[0] ?? "Compensation insight";
-  const subtitle = sections.summary;
-  const materialGaps = getSectionItems(sections, ["gap"]);
-  const tradeoffs = getSectionItems(sections, ["tradeoff", "mix"]);
-  const actions = getSectionItems(sections, ["action", "next", "plan"]);
+  const title = stripMarkdownNoise(sections.headings[0] ?? "Compensation insight");
+  const subtitle = stripMarkdownNoise(sections.summary);
+  const materialGaps = cleanList(getSectionItems(sections, ["gap"]));
+  const tradeoffs = cleanList(getSectionItems(sections, ["tradeoff", "mix"]));
+  const actions = cleanList(getSectionItems(sections, ["action", "next", "plan"]));
   const evidenceLines = getSectionItems(sections, ["evidence", "source"]);
-  const evidence = evidenceLines.map(parseEvidenceLine).filter(Boolean) as AssistantPanelModel["evidence"];
+  const evidence = evidenceLines
+    .map(parseEvidenceLine)
+    .filter((entry): entry is { label: string; source: string } => Boolean(entry))
+    .map((item) => ({
+      label: stripMarkdownNoise(item.label),
+      source: stripMarkdownNoise(item.source)
+    })) as AssistantPanelModel["evidence"];
 
   return {
     title,
@@ -313,7 +273,7 @@ function buildAssistantPanelModel(content: string, base: ReturnType<typeof build
     contextChips: base.contextChips,
     kpis: base.kpis,
     bands: base.bands,
-    materialGaps: materialGaps.length ? materialGaps : sections.defaultBullets,
+    materialGaps: materialGaps.length ? materialGaps : cleanList(sections.defaultBullets),
     tradeoffs,
     actions,
     evidence
@@ -350,10 +310,7 @@ function parseSections(content: string) {
   return { headings, sectionMap, defaultBullets, summary: summaryText };
 }
 
-function getSectionItems(
-  parsed: ReturnType<typeof parseSections>,
-  keywords: string[]
-): string[] {
+function getSectionItems(parsed: ReturnType<typeof parseSections>, keywords: string[]): string[] {
   const entry = Array.from(parsed.sectionMap.entries()).find(([key]) =>
     keywords.some((kw) => key.includes(kw))
   );
@@ -369,6 +326,13 @@ function parseEvidenceLine(line: string) {
     return { label: match[1].trim(), source: match[2].replace(")", "").trim() };
   }
   return { label: line, source: "mock" };
+}
+
+function cleanList(items?: string[]) {
+  return (items ?? [])
+    .map((item) => stripMarkdownNoise(item))
+    .map((item) => item.replace(/^\d+\.\s*/, ""))
+    .filter(Boolean);
 }
 
 function buildAutoPromptMessage(payload: AutoPromptPayload) {
@@ -410,6 +374,33 @@ function buildAutoPromptMessage(payload: AutoPromptPayload) {
   );
 
   return lines.join("\n");
+}
+
+function buildAutoSummaryPrompt(payload: AutoPromptPayload) {
+  if (!payload?.inputs || !payload?.output) return null;
+  const { inputs, output, roleBand } = payload;
+  const chips = [
+    roleBand ? `Role band: ${describeRoleBand(roleBand)}` : null,
+    inputs.company ? `Company size: ${inputs.company}` : null,
+    inputs.location ? `Location tier: ${inputs.location}` : null,
+    inputs.parity ? `Parity rule: ${inputs.parity}` : null,
+    inputs.mix ? `Cash vs equity mix: ${inputs.mix}` : null,
+    inputs.role ? `Scope: ${inputs.role.directs} directs; ${inputs.role.hasPNL ? "owns P&L" : "no P&L"}` : null
+  ]
+    .filter(Boolean)
+    .join(" • ");
+
+  return [
+    "Summarize the latest compensation insight you generated into a crisp TL;DR paragraph (max 3 sentences).",
+    "Tone: executive summary, highlight the biggest takeaway and any notable risk or action.",
+    "Context chips:",
+    chips,
+    "Bands:",
+    `Base: $${output.baseMin.toLocaleString()} - $${output.baseMax.toLocaleString()}; Bonus: ${output.bonusPct}%; LTI: $${output.ltiAnnual.toLocaleString()}`,
+    "Do not repeat numbering or markdown headings."
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 function describeRoleBand(selection?: RoleBandSelection) {

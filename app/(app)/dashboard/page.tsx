@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,17 +25,21 @@ export default function DashboardPage() {
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Button className="gap-2 bg-[rgb(var(--accent))] text-white shadow-[var(--soft-shadow)] hover:opacity-90">
-              Launch ingestion →
-            </Button>
-            <Button variant="secondary" className="bg-white/10 text-white hover:bg-white/20">
-              Preview board pack
-            </Button>
+            <Link href="/filings" prefetch={false} className="inline-flex">
+              <Button className="gap-2 bg-[rgb(var(--accent))] text-white shadow-[var(--soft-shadow)] hover:opacity-90">
+                Launch ingestion →
+              </Button>
+            </Link>
+            <Link href="/reports" prefetch={false} className="inline-flex">
+              <Button variant="secondary" className="bg-white/10 text-white hover:bg-white/20">
+                Preview board pack
+              </Button>
+            </Link>
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
-            <BoardStat label="Filings ingested" value="+1.2M rows" />
-            <BoardStat label="Extraction accuracy" value="98.4%" />
-            <BoardStat label="Analyst hits" value="+54" />
+            <BoardStat label="Filings ingested" value="+1.2M rows" valueClassName="text-sky-500 dark:text-sky-300" />
+            <BoardStat label="Extraction accuracy" value="98.4%" valueClassName="text-emerald-500 dark:text-emerald-300" />
+            <BoardStat label="Analyst hits" value="+54" valueClassName="text-indigo-500 dark:text-indigo-300" />
           </div>
         </div>
       </GlassCard>
@@ -46,10 +51,16 @@ export default function DashboardPage() {
             <p className="text-xs text-text/60 dark:text-white/60">Last updated 3h ago</p>
           </div>
           <div className="space-x-2">
-            <Badge variant="outline" className="border-border bg-white/80 text-text dark:border-white/20 dark:bg-white/5 dark:text-white">
+            <Badge
+              variant="outline"
+              className="border-none bg-[#ffd369]/25 text-[#b98a1d] dark:bg-[#ffd369]/15 dark:text-[#ffd369]"
+            >
               TSR %
             </Badge>
-            <Badge variant="outline" className="border-border bg-white/80 text-text dark:border-white/20 dark:bg-white/5 dark:text-white">
+            <Badge
+              variant="outline"
+              className="border-none bg-[#5d5fe5]/25 text-[#3032a3] dark:bg-[#5d5fe5]/15 dark:text-[#5d5fe5]"
+            >
               CEO pay
             </Badge>
           </div>
@@ -67,13 +78,13 @@ export default function DashboardPage() {
       <KpiCard
         label="Trackable metrics"
         value="312"
-        icon={<Layers className="h-4 w-4 text-text/50 dark:text-white/40" />}
+        icon={<Layers className="h-4 w-4 text-sky-500" />}
         className="md:col-span-3 opacity-90"
       />
       <KpiCard
         label="Filings queued"
         value="28"
-        icon={<FileText className="h-4 w-4 text-text/50 dark:text-white/40" />}
+        icon={<FileText className="h-4 w-4 text-emerald-500" />}
         className="md:col-span-3 opacity-100"
       />
       <KpiCard
@@ -81,13 +92,13 @@ export default function DashboardPage() {
         value="7"
         delta="Requires sign-off"
         intent="warn"
-        icon={<AlertTriangle className="h-4 w-4 text-text/50 dark:text-white/40" />}
+        icon={<AlertTriangle className="h-4 w-4 text-amber-500" />}
         className="md:col-span-3 opacity-80"
       />
 
       <GlassCard className="md:col-span-4 min-h-[260px] p-6">
         <div className="flex items-center gap-2 text-sm font-semibold text-text dark:text-white">
-          <Bell className="h-4 w-4 text-text/60 dark:text-white/50" />
+          <Bell className="h-4 w-4 text-sky-400" />
           Filings pipeline
         </div>
         <p className="mt-3 text-sm text-text/80 dark:text-white/70">
@@ -103,7 +114,7 @@ export default function DashboardPage() {
 
       <GlassCard className="md:col-span-4 min-h-[260px] p-6">
         <div className="flex items-center gap-2 text-sm font-semibold text-text dark:text-white">
-          <AlertTriangle className="h-4 w-4 text-text/60 dark:text-white/50" />
+          <AlertTriangle className="h-4 w-4 text-amber-500" />
           Alert feed
         </div>
         <ul className="mt-3 space-y-3 text-sm text-text/80 dark:text-white/75">
@@ -115,7 +126,7 @@ export default function DashboardPage() {
 
       <GlassCard className="md:col-span-4 min-h-[260px] p-6">
         <div className="flex items-center gap-2 text-sm font-semibold text-text dark:text-white">
-          <FileText className="h-4 w-4 text-text/60 dark:text-white/50" />
+          <FileText className="h-4 w-4 text-emerald-400" />
           Board prep
         </div>
         <p className="mt-3 text-sm text-text/80 dark:text-white/70">

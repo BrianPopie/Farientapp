@@ -2,14 +2,13 @@ import type { ReactNode } from "react";
 import { Ambience } from "./Ambience";
 
 type CopilotShellProps = {
-  headerAction?: ReactNode;
   chips?: ReactNode;
   conversation: ReactNode;
   contextRail: ReactNode;
   commandBar: ReactNode;
 };
 
-export function CopilotShell({ headerAction, chips, conversation, contextRail, commandBar }: CopilotShellProps) {
+export function CopilotShell({ chips, conversation, contextRail, commandBar }: CopilotShellProps) {
   return (
     <section className="card relative flex min-h-[70vh] flex-col overflow-hidden p-0">
       <Ambience />
@@ -19,7 +18,6 @@ export function CopilotShell({ headerAction, chips, conversation, contextRail, c
             <p className="text-xs uppercase tracking-[0.35em] text-slate-500">Farient Copilot</p>
             <h2 className="text-lg font-semibold text-text">Role-aware Farient Copilot</h2>
           </div>
-          {headerAction ? <div>{headerAction}</div> : null}
         </div>
         {chips}
       </header>

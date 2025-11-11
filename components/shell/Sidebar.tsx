@@ -8,11 +8,11 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/ai", label: "AI Copilot", icon: Bot },
-  { href: "/filings", label: "Ingestion", icon: FileStack },
-  { href: "/reports", label: "Reports", icon: Presentation },
-  { href: "/admin", label: "Admin", icon: Shield }
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, color: "text-sky-500" },
+  { href: "/filings", label: "Ingestion", icon: FileStack, color: "text-emerald-500" },
+  { href: "/ai", label: "AI Copilot", icon: Bot, color: "text-indigo-500" },
+  { href: "/reports", label: "Reports", icon: Presentation, color: "text-amber-500" },
+  { href: "/admin", label: "Admin", icon: Shield, color: "text-rose-500" }
 ];
 
 export function Sidebar() {
@@ -36,7 +36,7 @@ export function Sidebar() {
       </div>
 
       <nav className="mt-8 flex-1 space-y-1">
-        {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+        {NAV_ITEMS.map(({ href, label, icon: Icon, color }) => {
           const active = pathname === href;
           return (
             <Link
@@ -50,7 +50,12 @@ export function Sidebar() {
                   : "text-text/60 hover:bg-white/10 hover:text-text dark:text-white/60 dark:hover:text-white"
               )}
             >
-              <Icon className="h-4 w-4" />
+              <Icon
+                className={cn(
+                  "h-4 w-4 transition",
+                  active ? color : "text-text/50 dark:text-white/50"
+                )}
+              />
               {label}
             </Link>
           );

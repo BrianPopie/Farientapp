@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { AssistantPanel } from "./AssistantPanel";
 import type { AssistantPanelModel, CopilotMessage } from "./types";
+import { stripMarkdownNoise } from "@/lib/text/sanitize";
 
 type ConversationProps = {
   messages: CopilotMessage[];
@@ -28,7 +29,9 @@ export function Conversation({ messages, pending, assistantModels }: Conversatio
           const content = panel ? (
             <AssistantPanel {...panel} />
           ) : (
-            <p className="ai-prose text-sm text-slate-700 dark:text-slate-200">{message.content}</p>
+            <p className="ai-prose text-sm text-slate-700 dark:text-slate-200">
+              {stripMarkdownNoise(message.content)}
+            </p>
           );
 
           return (
@@ -50,7 +53,9 @@ export function Conversation({ messages, pending, assistantModels }: Conversatio
             className="ml-auto max-w-2xl rounded-3xl border border-border bg-white px-4 py-3 text-sm text-slate-900 shadow-soft dark:border-white/10 dark:bg-white/5 dark:text-white"
           >
             <p className="text-xs uppercase tracking-wide text-slate-500 dark:text-white/60">You</p>
-            <p className="mt-1 whitespace-pre-wrap leading-6 text-slate-700 dark:text-white">{message.content}</p>
+            <p className="mt-1 whitespace-pre-wrap leading-6 text-slate-700 dark:text-white">
+              {stripMarkdownNoise(message.content)}
+            </p>
           </div>
         );
       })}

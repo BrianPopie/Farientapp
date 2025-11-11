@@ -86,6 +86,29 @@ body {
   .ai-fade-rise {
     animation: none;
   }
+
+  .animate-pulse-check {
+    animation: none;
+  }
+}
+
+@keyframes pulse-check {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-pulse-check {
+  animation: pulse-check 0.4s ease-out;
 }
 
 /* Nice card + focus defaults */

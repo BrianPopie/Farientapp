@@ -96,6 +96,19 @@ export default function OutputBuilder({ onGenerate }: OutputBuilderProps) {
     Boolean(state.mix) &&
     Boolean(roleComplete);
 
+  const missingFields = useMemo(() => {
+    const missing: { label: string; hint?: string }[] = [];
+    if (!state.company) missing.push({ label: "Company size", hint: "Step 1 – Company size" });
+    if (!state.role || typeof state.role.hasPNL !== "boolean")
+      missing.push({ label: "P&L ownership", hint: "Step 2 – Role scope" });
+    if (!state.role?.directs) missing.push({ label: "Direct reports", hint: "Step 2 – Role scope" });
+    if (!state.roleBand?.roleLabel) missing.push({ label: "Role band", hint: "Step 2 – Role scope" });
+    if (!state.location) missing.push({ label: "Location tier", hint: "Step 3 – Location" });
+    if (!state.parity) missing.push({ label: "Parity guardrails", hint: "Step 4 – Parity" });
+    if (!state.mix) missing.push({ label: "Cash vs equity", hint: "Step 5 – Cash vs equity" });
+    return missing;
+  }, [state.company, state.role, state.roleBand, state.location, state.parity, state.mix]);
+
   const toRequiredInputs = (): Required<Inputs> | null => {
     if (
       !complete ||
@@ -212,11 +225,23 @@ export default function OutputBuilder({ onGenerate }: OutputBuilderProps) {
             const status = idx < stepIndex ? "complete" : idx === stepIndex ? "current" : "upcoming";
             return (
               <li key={step.key}>
-                <span className={`badge ${cnStepper(status)}`}>
-                  <span className="font-semibold">{idx + 1}</span>
-                  <span>{step.label}</span>
+                <button
+                  type="button"
+                  onClick={() => setStepIndex(idx)}
+                className={`badge transition ${cnStepper(status)} ${
+                  idx === stepIndex ? "ring-1 ring-[rgb(var(--accent))]" : "hover:ring-1 hover:ring-[rgb(var(--accent))]/40"
+                }`}
+              >
+                <span className="flex items-center gap-2">
+                  {status === "complete" ? (
+                    <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-emerald-400/80 text-[10px] font-bold text-white animate-pulse-check">
+                      ✓
+                    </span>
+                  ) : null}
+                  {step.label}
                 </span>
-              </li>
+              </button>
+            </li>
             );
           })}
         </ol>
@@ -225,6 +250,19 @@ export default function OutputBuilder({ onGenerate }: OutputBuilderProps) {
       <div className="space-y-4">
         {renderStep()}
         {error ? <p className="text-sm text-red-500">{error}</p> : null}
+        {stepIndex === steps.length - 1 && !complete && missingFields.length ? (
+          <div className="space-y-1 text-xs text-amber-500">
+            <p>Complete the following to unlock Generate Insights:</p>
+            <ul className="list-disc pl-5">
+              {missingFields.map((field) => (
+                <li key={field.label}>
+                  {field.label}
+                  {field.hint ? ` (${field.hint})` : null}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
         <div className="flex flex-wrap gap-3 pt-2">
           <button
             type="button"
@@ -264,10 +302,10 @@ export default function OutputBuilder({ onGenerate }: OutputBuilderProps) {
 
 function cnStepper(status: "complete" | "current" | "upcoming") {
   if (status === "complete") {
-    return "border-emerald-200 bg-emerald-50 text-emerald-700";
+    return "border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-400/60 dark:bg-emerald-900/40 dark:text-emerald-100";
   }
   if (status === "current") {
-    return "border-slate-900 bg-slate-900 text-white";
+    return "border-[rgb(var(--accent))] bg-[rgb(var(--accent))] text-white dark:border-white/80 dark:bg-white/10 dark:text-white";
   }
-  return "border-slate-200 bg-card text-slate-500";
+  return "border-border bg-card text-text dark:border-white/15 dark:bg-white/5 dark:text-slate-200";
 }
