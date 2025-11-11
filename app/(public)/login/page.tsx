@@ -6,7 +6,8 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 export const dynamic = "force-static";
 
 export default function LoginPage() {
-  const backgroundUrl = "https://i.gifer.com/QWc9.gif";
+  const backgroundUrl =
+    "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExY3U0Ymp1Mm54bGFrZXV0bXVzZDczY2sxdHIyODhueDlsa29jbGs3ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Byour3OgR0nWnRR6Tc/giphy.gif";
 
   return (
     <main className="relative flex min-h-screen w-screen items-center justify-center overflow-hidden">
