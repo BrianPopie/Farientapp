@@ -56,16 +56,17 @@ type PayMixProps = {
 type ReportPreviewProps = {
   roleInsight?: InsightPayload | null;
   payMix?: PayMixProps;
+  brandColor?: string;
 };
 
-export function ReportPreview({ roleInsight, payMix }: ReportPreviewProps) {
+export function ReportPreview({ roleInsight, payMix, brandColor }: ReportPreviewProps) {
   const insightSegments = roleInsight ? mapInsightSegments(roleInsight.body) : null;
 
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2">
         {slides.map((slide) => (
-          <SlideCard key={slide.title} {...slide} />
+          <SlideCard key={slide.title} {...slide} accentColor={brandColor} />
         ))}
       </div>
 

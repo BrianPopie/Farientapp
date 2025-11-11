@@ -68,20 +68,26 @@ export function AiInsightPanel({
           <Button type="button" onClick={() => ask()} disabled={streaming || !input.trim()}>
             Send
           </Button>
-          {suggestions.map((suggestion) => (
-            <Button
-              key={suggestion}
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={streaming}
-              onClick={() => ask(suggestion)}
-            >
-              {suggestion}
-            </Button>
-          ))}
         </div>
+        {suggestions.length ? (
+          <div className="grid gap-2 sm:grid-cols-2">
+            {suggestions.map((suggestion) => (
+              <button
+                key={suggestion}
+                type="button"
+                disabled={streaming}
+                onClick={() => ask(suggestion)}
+                className={cn(
+                  "rounded-2xl border border-border/60 bg-surface/60 px-4 py-2 text-sm text-left text-text/80 transition hover:bg-surface",
+                  streaming && "opacity-50"
+                )}
+              >
+                {suggestion}
+              </button>
+            ))}
+          </div>
+        ) : null}
       </CardContent>
     </Card>
   );
-}
+}

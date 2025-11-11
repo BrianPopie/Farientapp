@@ -1,10 +1,11 @@
-﻿type SlideCardProps = {
+type SlideCardProps = {
   title: string;
   subtitle: string;
   highlights: string[];
+  accentColor?: string;
 };
 
-export function SlideCard({ title, subtitle, highlights }: SlideCardProps) {
+export function SlideCard({ title, subtitle, highlights, accentColor }: SlideCardProps) {
   return (
     <div className="flex h-60 w-full flex-col rounded-3xl border border-border bg-surface/90 p-6 shadow-sm">
       <p className="text-[0.75rem] uppercase tracking-wide text-text-muted">{subtitle}</p>
@@ -12,7 +13,11 @@ export function SlideCard({ title, subtitle, highlights }: SlideCardProps) {
       <ul className="mt-4 space-y-2 text-sm text-text-muted">
         {highlights.map((item) => (
           <li key={item} className="flex gap-2">
-            <span className="text-accent" aria-hidden="true">
+            <span
+              className="text-accent"
+              aria-hidden="true"
+              style={accentColor ? { color: accentColor } : undefined}
+            >
               &bull;
             </span>
             {item}

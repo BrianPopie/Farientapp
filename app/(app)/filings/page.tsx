@@ -111,29 +111,6 @@ When asked, mention citations or filings by name and recommend the next best act
 
 export default function FilingsPage() {
   const [uploads, setUploads] = React.useState<UploadedFiling[]>([]);
-  const [loadingUploads, setLoadingUploads] = React.useState(false);
-  const [uploadError, setUploadError] = React.useState<string | null>(null);
-
-  const refreshUploads = React.useCallback(async () => {
-    setLoadingUploads(true);
-    setUploadError(null);
-    try {
-      const res = await fetch("/api/uploads");
-      if (!res.ok) {
-        throw new Error("Unable to load uploads");
-      }
-      const data = (await res.json()) as { files: UploadedFiling[] };
-      setUploads(data.files);
-    } catch (error) {
-      setUploadError(error instanceof Error ? error.message : "Unable to load uploads");
-    } finally {
-      setLoadingUploads(false);
-    }
-  }, []);
-
-  React.useEffect(() => {
-    refreshUploads();
-  }, [refreshUploads]);
 
   const handleUploaded = (file: UploadedFiling) => {
     setUploads((prev) => [file, ...prev]);
@@ -175,8 +152,9 @@ export default function FilingsPage() {
       <section className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
         <UploadDropzone onUploaded={handleUploaded} />
         <div className="grid gap-4 sm:grid-cols-2">
-          {loadingUploads && <p className="text-xs text-text-muted">Loading uploads…</p>}
-          {uploadError && <p className="text-xs text-danger">{uploadError}</p>}
+          {uploads.length === 0 ? (
+            <p className="text-xs text-text-muted">Drop a PDF dummy file to see it appear here instantly.</p>
+          ) : null}
           {combinedFiles.map(({ viewKey, ...file }) => (
             <FileCard key={viewKey} {...file} />
           ))}
