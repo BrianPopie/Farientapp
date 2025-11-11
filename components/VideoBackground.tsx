@@ -13,10 +13,14 @@ export default function VideoBackground({
   forceMotion?: boolean;
 }) {
   const [motionOK, setMotionOK] = React.useState(true);
-  const [ready, setReady] = React.useState(false);
+  const [ok, setOk] = React.useState(false);
+  const [err, setErr] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    if (forceMotion) return;
+    if (forceMotion) {
+      setMotionOK(true);
+      return;
+    }
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     const update = () => setMotionOK(!mq.matches);
     update();
@@ -31,21 +35,25 @@ export default function VideoBackground({
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(1200px 800px at 60% -10%, rgba(56,189,248,.25) 0%, rgba(56,189,248,0) 55%), radial-gradient(1200px 800px at 85% 110%, rgba(34,197,94,.18) 0%, rgba(34,197,94,0) 60%)"
+            "radial-gradient(1200px 800px at 60% -10%, rgba(56,189,248,.25) 0%, rgba(56,189,248,0) 55%)," +
+            "radial-gradient(1200px 800px at 85% 110%, rgba(34,197,94,.18) 0%, rgba(34,197,94,0) 60%)"
         }}
       />
-      {motionOK ? (
+      {motionOK && !err ? (
         <video
           className="absolute inset-0 h-full w-full object-cover"
-          src={src}
-          poster={poster}
           muted
           loop
-          playsInline
           autoPlay
+          playsInline
           preload="metadata"
-          onCanPlay={() => setReady(true)}
-          onError={(e) => console.error("Video load error →", (e.target as HTMLVideoElement).src)}
+          poster={poster}
+          onCanPlayThrough={() => setOk(true)}
+          onError={(e) => {
+            const el = e.currentTarget as HTMLVideoElement;
+            console.error("Video error:", el.currentSrc);
+            setErr("Video failed to decode (check codec/path)");
+          }}
         >
           <source src={src} type="video/mp4" />
         </video>
@@ -57,9 +65,9 @@ export default function VideoBackground({
         />
       )}
       <div aria-hidden className="absolute inset-0 bg-black" style={{ opacity: overlay }} />
-      {!ready && motionOK && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-sm text-white">
-          Loading background...
+      {err && (
+        <div className="pointer-events-auto absolute bottom-2 left-2 rounded bg-black/70 px-2 py-1 text-[11px] text-white">
+          {err}
         </div>
       )}
     </div>
