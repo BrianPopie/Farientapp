@@ -2,8 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
 
-export function ThemeToggle() {
+type ThemeToggleProps = {
+  className?: string;
+};
+
+export function ThemeToggle({ className }: ThemeToggleProps) {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -14,7 +19,7 @@ export function ThemeToggle() {
   return (
     <button
       type="button"
-      className="btn btn-ghost text-sm"
+      className={cn("btn btn-ghost text-sm", className)}
       aria-label="Toggle theme"
       onClick={() => setTheme(isDark ? "light" : "dark")}
       disabled={!mounted}
