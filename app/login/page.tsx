@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { LoginForm } from "@/components/LoginForm";
 import VideoBackground from "@/components/VideoBackground";
 
@@ -17,6 +18,11 @@ export default function LoginPage() {
           <h1 className="text-xl font-semibold">Login</h1>
         </div>
         <LoginForm />
+        <div className="mt-4 text-center text-sm">
+          <Link href="/dashboard" prefetch={false} className="text-white/80 underline-offset-4 hover:text-white hover:underline">
+            Continue
+          </Link>
+        </div>
       </div>
     </main>
   );

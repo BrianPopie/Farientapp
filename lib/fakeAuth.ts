@@ -10,6 +10,8 @@ import {
 
 export type Session = SessionPayload;
 
+export const AUTH_EVENT = "farient:auth-change";
+
 const encode = (value: Session) => serializeSession(value);
 const decode = (value: string | undefined | null): Session | null => {
   const parsed = parseSession(value);
@@ -33,12 +35,14 @@ function writeCookie(value: Session | null) {
   const base = `${SESSION_COOKIE_NAME}=`;
   if (!value) {
     document.cookie = `${base}; Path=/; Max-Age=0; SameSite=Lax`;
+    notifyAuthChange();
     return;
   }
   const expires = new Date(Date.now() + SESSION_MAX_AGE * 1000).toUTCString();
   document.cookie = `${base}${encode(value)}; Path=/; Max-Age=${SESSION_MAX_AGE}; Expires=${expires}; SameSite=Lax${
     process.env.NODE_ENV === "production" ? "; Secure" : ""
   }`;
+  notifyAuthChange();
 }
 
 async function syncSession(action: "set" | "clear", session?: Session) {
@@ -76,3 +80,11 @@ export const fakeAuth = {
     void syncSession("clear");
   }
 };
+
+function notifyAuthChange() {
+  if (typeof window === "undefined") {
+    return;
+  }
+  const event = new Event(AUTH_EVENT);
+  window.dispatchEvent(event);
+}

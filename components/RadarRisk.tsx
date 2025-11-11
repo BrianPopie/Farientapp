@@ -24,8 +24,8 @@ export function RadarRisk({ data, isVisible = true, heightClass = "h-[320px]", c
           </div>
         ) : (
           <RadarChart data={data} width={width} height={height} outerRadius="80%" aria-label="Risk profile radar chart">
-            <PolarGrid stroke="hsla(var(--text-muted) / 0.2)" />
-            <PolarAngleAxis dataKey="axis" tick={{ fill: "hsl(var(--text-muted))", fontSize: 12 }} />
+            <PolarGrid stroke="rgba(var(--text-muted),0.2)" />
+            <PolarAngleAxis dataKey="axis" tick={{ fill: "rgb(var(--text-muted))", fontSize: 12 }} />
             <Radar
               dataKey="value"
               stroke={getSeriesColor(2)}
@@ -39,3 +39,4 @@ export function RadarRisk({ data, isVisible = true, heightClass = "h-[320px]", c
     </MeasuredChart>
   );
 }
+

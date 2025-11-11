@@ -12,7 +12,7 @@ export function Nav() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 border-b border-border bg-[hsla(var(--bg)/0.85)] backdrop-blur-xl transition-[padding]",
+        "sticky top-0 z-40 border-b border-border bg-[rgba(var(--bg),0.85)] backdrop-blur-xl transition-[padding]",
         "px-3 py-2"
       )}
     >

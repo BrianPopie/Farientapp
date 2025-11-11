@@ -21,7 +21,7 @@ const SelectTrigger = React.forwardRef<SelectTriggerRef, SelectTriggerProps>(({ 
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      "flex h-11 w-full items-center justify-between rounded-2xl border border-border bg-surface px-4 text-sm text-text placeholder:text-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--bg))]",
+      "flex h-11 w-full items-center justify-between rounded-2xl border border-border bg-surface px-4 text-sm text-text placeholder:text-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]",
       className
     )}
     {...props}
@@ -93,3 +93,4 @@ const SelectSeparator = React.forwardRef<
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
 
 export { Select, SelectGroup, SelectValue, SelectTrigger, SelectContent, SelectLabel, SelectItem, SelectSeparator };
+

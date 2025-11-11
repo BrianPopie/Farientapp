@@ -70,7 +70,7 @@ const LegendContent = ({ payload = [] }: LegendContentProps) => {
         <li key={`${entry?.value ?? index}`}>
           <button
             type="button"
-            className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-1 text-xs font-semibold text-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--bg))]"
+            className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-1 text-xs font-semibold text-text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-[rgb(var(--bg))]"
           >
             <span
               className="h-2.5 w-2.5 rounded-full"
@@ -110,7 +110,7 @@ export function TrendChart({ data, isVisible = true, heightClass = "h-[320px]", 
                 tickLine={false}
                 tickFormatter={(value) => `${value / 1_000_000}M`}
               />
-              <Tooltip content={<CustomTooltip />} cursor={{ stroke: "hsla(var(--text-muted) / 0.2)" }} />
+              <Tooltip content={<CustomTooltip />} cursor={{ stroke: "rgba(var(--text-muted),0.2)" }} />
               <Legend content={<LegendContent />} />
               <Line
                 yAxisId="left"
@@ -120,7 +120,7 @@ export function TrendChart({ data, isVisible = true, heightClass = "h-[320px]", 
                 stroke={getSeriesColor(0)}
                 strokeWidth={strokeWidth}
                 activeDot={{ r: 5 }}
-                dot={{ r: 4, strokeWidth: 1.5, stroke: "hsl(var(--bg))" }}
+                dot={{ r: 4, strokeWidth: 1.5, stroke: "rgb(var(--bg))" }}
               />
               <Line
                 yAxisId="right"
@@ -130,7 +130,7 @@ export function TrendChart({ data, isVisible = true, heightClass = "h-[320px]", 
                 stroke={getSeriesColor(1)}
                 strokeWidth={strokeWidth}
                 activeDot={{ r: 5 }}
-                dot={{ r: 4, strokeWidth: 1.5, stroke: "hsl(var(--bg))" }}
+                dot={{ r: 4, strokeWidth: 1.5, stroke: "rgb(var(--bg))" }}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -139,3 +139,4 @@ export function TrendChart({ data, isVisible = true, heightClass = "h-[320px]", 
     </MeasuredChart>
   );
 }
+

@@ -2,8 +2,8 @@
 
 import dynamic from "next/dynamic";
 import { Suspense, type ReactNode, useEffect, useMemo, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import { fakeAuth } from "@/lib/fakeAuth";
+import { useRouter } from "next/navigation";
+import { AUTH_EVENT, fakeAuth } from "@/lib/fakeAuth";
 import { CitationDrawer } from "@/components/CitationDrawer";
 import { DevConsoleSilencer } from "@/components/DevConsoleSilencer";
 import { FocusModeProvider } from "@/hooks/useFocusMode";
@@ -11,7 +11,7 @@ import { FocusModeProvider } from "@/hooks/useFocusMode";
 const SidebarPanel = dynamic(() => import("@/components/Sidebar").then((mod) => ({ default: mod.Sidebar })), {
   ssr: false,
   loading: () => (
-    <aside className="hidden min-h-screen w-[240px] flex-col items-center justify-center border-r border-border bg-[hsla(var(--bg)/0.9)] p-4 text-xs text-text-muted lg:flex">
+    <aside className="hidden min-h-screen w-[240px] flex-col items-center justify-center border-r border-border bg-[rgba(var(--bg),0.9)] p-4 text-xs text-text-muted lg:flex">
       Loading navigation…
     </aside>
   )
@@ -20,7 +20,7 @@ const SidebarPanel = dynamic(() => import("@/components/Sidebar").then((mod) => 
 const NavBar = dynamic(() => import("@/components/Nav").then((mod) => ({ default: mod.Nav })), {
   ssr: false,
   loading: () => (
-    <div className="sticky top-0 z-40 flex h-16 items-center border-b border-border bg-[hsla(var(--bg)/0.85)] px-4 text-xs text-text-muted">
+    <div className="sticky top-0 z-40 flex h-16 items-center border-b border-border bg-[rgba(var(--bg),0.85)] px-4 text-xs text-text-muted">
       Preparing workspace…
     </div>
   )
@@ -31,40 +31,18 @@ interface AppChromeProps {
 }
 
 export function AppChrome({ children }: AppChromeProps) {
-  const [authed, setAuthed] = useState<boolean | null>(null);
-  const pathname = usePathname();
+  const [authed, setAuthed] = useState<boolean>(() => fakeAuth.isAuthed());
   const router = useRouter();
-  const loginRoute = pathname === "/login" || pathname === "/";
-  const shouldLogSessionCheck = process.env.NODE_ENV === "development";
 
   useEffect(() => {
-    const ok = fakeAuth.isAuthed();
-    setAuthed(ok);
-    const redirectTarget = !ok && !loginRoute ? "/login" : null;
-    if (shouldLogSessionCheck) {
-      try {
-        const clientContext = {
-          location: typeof window !== "undefined" ? window.location.href : pathname,
-          userAgent: typeof navigator !== "undefined" ? navigator.userAgent : undefined
-        };
-        console.debug(
-          "[AppChrome] session-check",
-          JSON.stringify({
-            pathname,
-            loginRoute,
-            hasSession: ok,
-            redirect: redirectTarget,
-            ...clientContext
-          })
-        );
-      } catch {
-        // ignore logging issues
-      }
-    }
-    if (redirectTarget && pathname !== redirectTarget) {
-      router.replace(redirectTarget);
-    }
-  }, [loginRoute, pathname, router, shouldLogSessionCheck]);
+    const update = () => setAuthed(fakeAuth.isAuthed());
+    window.addEventListener(AUTH_EVENT, update);
+    window.addEventListener("focus", update);
+    return () => {
+      window.removeEventListener(AUTH_EVENT, update);
+      window.removeEventListener("focus", update);
+    };
+  }, []);
 
   const focusValue = useMemo(
     () => ({
@@ -77,11 +55,10 @@ export function AppChrome({ children }: AppChromeProps) {
 
   const handleSignOut = () => {
     fakeAuth.signOut();
-    setAuthed(false);
     router.push("/login");
   };
 
-  const renderLoading = (message = "Loading workspace...") => (
+  const renderLoading = (message = "Loading workspace…") => (
     <div className="flex min-h-screen w-full items-center justify-center bg-bg text-text">
       <p className="text-sm text-text-muted">{message}</p>
     </div>
@@ -90,12 +67,8 @@ export function AppChrome({ children }: AppChromeProps) {
   return (
     <>
       <DevConsoleSilencer />
-      {loginRoute ? (
-        children
-      ) : authed === null ? (
-        renderLoading()
-      ) : !authed ? (
-        renderLoading("Redirecting to login...")
+      {!authed ? (
+        renderLoading("Validating session…")
       ) : (
         <FocusModeProvider value={focusValue}>
           <>

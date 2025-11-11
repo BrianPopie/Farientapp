@@ -9,6 +9,7 @@ import { TrendPoint } from "@/lib/types";
 import { DataBadge } from "@/components/DataBadge";
 import { PageHeading, BodyText, SectionHeading } from "@/components/ui/typography";
 import { TrendChartIsland } from "./trend-chart-island";
+import { RenderProbe } from "@/components/RenderProbe";
 
 export const dynamic = "force-static";
 export const revalidate = 60;
@@ -30,6 +31,7 @@ const insightCards = [
 export default function DashboardPage() {
   return (
     <>
+      <RenderProbe label="dashboard/page" />
       <section
         className="grid gap-8 xl:grid-cols-[2fr_1.2fr] text-text"
         style={{ contentVisibility: "auto", containIntrinsicSize: "600px" }}
