@@ -6,8 +6,15 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 export const dynamic = "force-static";
 
 export default function LoginPage() {
+  const backgroundUrl = "https://i.gifer.com/QWc9.gif";
+
   return (
-    <main className="relative flex min-h-screen w-screen items-center justify-center overflow-hidden bg-gradient-to-br from-[#040a1a] via-[#0b1330] to-[#141f3f] dark:from-[#02030a] dark:via-[#050914] dark:to-[#0c1222]">
+    <main className="relative flex min-h-screen w-screen items-center justify-center overflow-hidden">
+      <div
+        className="absolute inset-0 -z-20 bg-cover bg-center"
+        style={{ backgroundImage: `url(${backgroundUrl})` }}
+      />
+      <div className="absolute inset-0 -z-10 bg-black/60" />
       <div className="absolute right-6 top-6 z-20">
         <ThemeToggle className="text-white border-white/30 hover:bg-white/10" />
       </div>
