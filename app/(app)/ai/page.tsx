@@ -1,7 +1,6 @@
 import OutputBuilder from "@/components/ai/OutputBuilder/Stepper";
 import ChatPanel from "@/components/ai/Chat/ChatPanel";
 import { generateBands, runRoleAwareChat } from "@/app/ai/actions";
-import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function AiPage() {
   return (
@@ -28,20 +27,9 @@ export default function AiPage() {
           </div>
         </section>
 
-        <section className="card flex min-h-0 flex-col p-5 lg:p-6">
-          <header className="sticky top-0 z-10 -m-5 -mb-4 border-b border-border bg-card/90 px-5 py-3 backdrop-blur lg:-m-6 lg:-mb-5 lg:px-6">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <h2 className="text-lg font-semibold text-text">Role-aware Farient Copilot</h2>
-                <p className="text-sm text-slate-600 dark:text-slate-300">Chat with context from the builder + quick workflows.</p>
-              </div>
-              <ThemeToggle />
-            </div>
-          </header>
-          <div className="flex-1 min-h-0 overflow-y-auto pr-1">
-            <ChatPanel onAsk={runRoleAwareChat} />
-          </div>
-        </section>
+        <div>
+          <ChatPanel onAsk={runRoleAwareChat} />
+        </div>
       </div>
     </div>
   );

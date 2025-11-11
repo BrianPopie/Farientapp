@@ -50,6 +50,44 @@ body {
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
+.ai-prose h4 {
+  @apply text-[15px] font-semibold leading-6;
+}
+
+.ai-prose p,
+.ai-prose li {
+  @apply leading-6;
+}
+
+.ai-prose ul {
+  @apply list-disc space-y-1.5 pl-5;
+}
+
+.ai-prose ol {
+  @apply list-decimal space-y-1.5 pl-5;
+}
+
+@keyframes ai-fade-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ai-fade-rise {
+  animation: ai-fade-rise 0.35s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ai-fade-rise {
+    animation: none;
+  }
+}
+
 /* Nice card + focus defaults */
 .card {
   @apply rounded-2xl bg-card shadow-soft border border-border;

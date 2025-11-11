@@ -1,18 +1,24 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Inputs, Output } from "@/lib/farient/types";
 import { systemPrompt } from "@/lib/farient/prompt";
 import { LS_KEY, LS_OUT, LS_AUTO, readJSON, removeKey } from "../ls";
 import type { BuilderState, RoleBandSelection } from "../OutputBuilder/state";
 import { ROLE_BANDS } from "@/lib/roles";
-import { Section } from "../Section";
+import type { AssistantPanelModel, CopilotMessage, QuickWorkflowChip } from "../Copilot/types";
+import { CopilotShell } from "../Copilot/CopilotShell";
+import { Conversation } from "../Copilot/Conversation";
+import { ContextRail } from "../Copilot/ContextRail";
+import { CommandBar } from "../Copilot/CommandBar";
+import { Chips } from "../Copilot/Chips";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
-type Message = { role: "user" | "assistant"; content: string };
+type MessagePayload = { role: "user" | "assistant"; content: string };
 
 export type AskPayload = {
   system: string;
-  messages: Message[];
+  messages: MessagePayload[];
 };
 
 export type ChatPanelProps = {
@@ -29,12 +35,24 @@ type AutoPromptPayload = {
 export default function ChatPanel({ onAsk }: ChatPanelProps) {
   const [builderState, setBuilderState] = useState<BuilderState | undefined>();
   const [bands, setBands] = useState<Output | undefined>();
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<CopilotMessage[]>([]);
+  const messagesRef = useRef<CopilotMessage[]>([]);
   const [draft, setDraft] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [autoPrompt, setAutoPrompt] = useState<AutoPromptPayload | null>(null);
   const handledAutoRef = useRef<number>(0);
+  const requestRef = useRef<number | null>(null);
+  const idRef = useRef(0);
+
+  const nextMessageId = () => {
+    idRef.current += 1;
+    return `msg-${idRef.current}`;
+  };
+
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
 
   useEffect(() => {
     setBuilderState(readJSON<BuilderState>(LS_KEY));
@@ -74,13 +92,7 @@ export default function ChatPanel({ onAsk }: ChatPanelProps) {
     };
   }, [builderState]);
 
-  const roleBandSummary = useMemo(() => {
-    if (!builderState?.roleBand) return undefined;
-    const label =
-      ROLE_BANDS.find((band) => band.key === builderState.roleBand?.bandKey)?.label ??
-      builderState.roleBand.bandKey;
-    return `${label} · ${builderState.roleBand.roleLabel}`;
-  }, [builderState?.roleBand]);
+  const roleBandSummary = useMemo(() => describeRoleBand(builderState?.roleBand), [builderState?.roleBand]);
 
   const contextReady = useMemo(() => {
     if (!inputs || !builderState?.roleBand) return false;
@@ -88,63 +100,87 @@ export default function ChatPanel({ onAsk }: ChatPanelProps) {
     return Boolean(inputs.company && hasRole && inputs.location && inputs.parity && inputs.mix && bands);
   }, [inputs, bands, builderState?.roleBand]);
 
-  const summaryItems = useMemo(() => {
-    if (!inputs) return [];
-    const items: { label: string; value: string }[] = [];
-    if (roleBandSummary) items.push({ label: "Role band", value: roleBandSummary });
-    if (inputs.company) items.push({ label: "Company", value: inputs.company });
-    if (inputs.location) items.push({ label: "Location", value: inputs.location });
-    if (inputs.parity) items.push({ label: "Parity", value: inputs.parity });
-    if (inputs.mix) items.push({ label: "Mix", value: inputs.mix });
-    return items;
-  }, [inputs, roleBandSummary]);
+  const quickWorkflows = useMemo<QuickWorkflowChip[]>(() => buildQuickWorkflows(inputs, bands, builderState?.roleBand), [
+    inputs,
+    bands,
+    builderState?.roleBand
+  ]);
 
-  const heroChips = useMemo(() => {
-    const chips: { label: string; value: string }[] = [];
-    if (roleBandSummary) chips.push({ label: "Role band", value: roleBandSummary });
-    if (inputs?.company) chips.push({ label: "Company size", value: inputs.company });
-    if (bands) {
-      chips.push({
-        label: "Band window",
-        value: `$${bands.baseMin.toLocaleString()} - $${bands.baseMax.toLocaleString()}`
-      });
+  const commandSuggestions = useMemo(() => {
+    if (!contextReady || !roleBandSummary) {
+      return ["Benchmark CFO vs mid-cap peers", "Explain pay-mix tradeoffs", "Prep comp committee summary"];
     }
-    return chips;
-  }, [bands, inputs, roleBandSummary]);
+    return [
+      `Benchmark ${builderState?.roleBand?.roleLabel ?? "role"} against peer medians`,
+      "Prep comp committee slide with gaps + TSR linkage",
+      "Outline 30-60 day actions for comp adjustments"
+    ];
+  }, [contextReady, roleBandSummary, builderState?.roleBand?.roleLabel]);
 
-  const bandSummary = useMemo(() => {
-    if (!bands) return undefined;
-    return {
-      base: `$${bands.baseMin.toLocaleString()} - $${bands.baseMax.toLocaleString()}`,
-      bonus: `${bands.bonusPct}%`,
-      lti: `$${bands.ltiAnnual.toLocaleString()}`
-    };
-  }, [bands]);
+  const assistantModels = useMemo(() => {
+    const base = buildAssistantPanelBase(inputs, bands, builderState?.roleBand);
+    return messages.reduce<Record<string, AssistantPanelModel | undefined>>((acc, message) => {
+      if (message.role === "assistant") {
+        acc[message.id] = buildAssistantPanelModel(message.content, base);
+      }
+      return acc;
+    }, {});
+  }, [messages, inputs, bands, builderState?.roleBand]);
 
   const handleSend = useCallback(
     async (content: string, options?: { force?: boolean; silent?: boolean }) => {
       const trimmed = content.trim();
       if (!trimmed || (!options?.force && pending)) return;
-      const userMessage: Message = { role: "user", content: trimmed };
-      const history = [...messages, userMessage];
-      setMessages(history);
+
+      const userMessage: CopilotMessage = { id: nextMessageId(), role: "user", content: trimmed };
+      const historyWithUser = [...messagesRef.current, userMessage];
+      messagesRef.current = historyWithUser;
+      setMessages(historyWithUser);
       if (!options?.silent) setDraft("");
       setPending(true);
       setError(null);
+
+      const payloadHistory: MessagePayload[] = historyWithUser.map(({ role, content: value }) => ({
+        role,
+        content: value
+      }));
+
+      const requestId = Date.now();
+      requestRef.current = requestId;
+
       try {
         const response = await onAsk({
           system: buildSystemPrompt(inputs, bands, roleBandSummary),
-          messages: history
+          messages: payloadHistory
         });
-        setMessages([...history, { role: "assistant", content: response }]);
+        if (requestRef.current !== requestId) return;
+        const assistantMessage: CopilotMessage = {
+          id: nextMessageId(),
+          role: "assistant",
+          content: response
+        };
+        const historyWithAssistant = [...messagesRef.current, assistantMessage];
+        messagesRef.current = historyWithAssistant;
+        setMessages(historyWithAssistant);
       } catch (err) {
+        if (requestRef.current !== requestId) return;
         setError(err instanceof Error ? err.message : "Unable to reach the copilot right now.");
       } finally {
-        setPending(false);
+        if (requestRef.current === requestId) {
+          requestRef.current = null;
+          setPending(false);
+        }
       }
     },
-    [bands, inputs, messages, onAsk, pending, roleBandSummary]
+    [bands, inputs, onAsk, pending, roleBandSummary]
   );
+
+  const handleStop = useCallback(() => {
+    if (!pending) return;
+    requestRef.current = null;
+    setPending(false);
+    setError("Request canceled.");
+  }, [pending]);
 
   useEffect(() => {
     if (!autoPrompt || !contextReady) return;
@@ -157,116 +193,182 @@ export default function ChatPanel({ onAsk }: ChatPanelProps) {
     void handleSend(autopMessage, { force: true, silent: true });
   }, [autoPrompt, contextReady, handleSend]);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    void handleSend(draft);
-  };
+  const chipsNode = (
+    <Chips
+      items={quickWorkflows}
+      disabled={!contextReady || pending}
+      onSelect={(chip) => handleSend(chip.prompt, { force: true })}
+    />
+  );
 
-  return (
-    <div className="flex min-h-0 flex-col gap-6">
-      <Section title="Context" subtitle="Persisted inputs + computed bands">
-        {heroChips.length ? (
-          <div className="flex flex-wrap gap-3">
-            {heroChips.map((chip) => (
-              <span key={chip.label} className="badge bg-card px-3 py-1 text-xs font-semibold">
-                {chip.label}: <span className="font-normal text-slate-600 dark:text-slate-300">{chip.value}</span>
-              </span>
-            ))}
-          </div>
-        ) : (
-          <p className="text-xs text-slate-600 dark:text-slate-400">Complete the builder to push context here.</p>
-        )}
+  const conversationNode = (
+    <Conversation messages={messages} pending={pending} assistantModels={assistantModels} />
+  );
 
-        {summaryItems.length ? (
-          <dl className="grid gap-3 text-xs text-slate-600 dark:text-slate-300 sm:grid-cols-2">
-            {summaryItems.map((item) => (
-              <div key={item.label}>
-                <dt className="font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                  {item.label}
-                </dt>
-                <dd className="text-sm text-slate-700 dark:text-slate-200">{item.value}</dd>
-              </div>
-            ))}
-          </dl>
-        ) : null}
+  const contextRailNode = (
+    <ContextRail inputs={inputs} roleBand={builderState?.roleBand} bands={bands} ready={contextReady} />
+  );
 
-        {bandSummary ? (
-          <div className="grid gap-3 text-xs text-slate-600 dark:text-slate-300 sm:grid-cols-3">
-            <div>
-              <p className="font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Base</p>
-              <p className="text-sm text-slate-700 dark:text-slate-200">{bandSummary.base}</p>
-            </div>
-            <div>
-              <p className="font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Bonus</p>
-              <p className="text-sm text-slate-700 dark:text-slate-200">{bandSummary.bonus}</p>
-            </div>
-            <div>
-              <p className="font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Equity / LTI</p>
-              <p className="text-sm text-slate-700 dark:text-slate-200">{bandSummary.lti}</p>
-            </div>
-          </div>
-        ) : null}
-      </Section>
-
-      {!contextReady ? (
-        <div className="rounded-2xl border border-dashed border-amber-400 bg-amber-50/60 p-4 text-sm text-amber-700">
-          Finish the builder steps and generate bands to unlock fully contextual responses.
-        </div>
-      ) : null}
-
-      <Section title="Conversation" subtitle="Chat with Farient using the stored context." className="flex min-h-0 flex-col">
-        <div className="card flex min-h-0 flex-col space-y-3 p-4">
-          <div className="flex-1 min-h-0 space-y-3 overflow-y-auto pr-1">
-            {messages.length === 0 ? (
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                No conversation yet. Kick things off with a quick workflow or type a question below.
-              </p>
-            ) : (
-              messages.map((message, index) => (
-                <div
-                  key={`${message.role}-${index}`}
-                  className={`rounded-2xl border px-4 py-3 text-sm shadow-soft ${
-                    message.role === "user"
-                      ? "border-text bg-text text-bg"
-                      : "border-slate-200 bg-white/90 text-slate-800 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-100"
-                  }`}
-                >
-                  <p className="text-xs uppercase tracking-wide opacity-70">{message.role}</p>
-                  <div className="mt-2 text-sm leading-relaxed">
-                    {message.role === "assistant" ? (
-                      <AssistantMessage content={message.content} />
-                    ) : (
-                      <p className="whitespace-pre-wrap">{message.content}</p>
-                    )}
-                  </div>
-                </div>
-              ))
-            )}
-            {pending ? <p className="text-xs text-slate-500">Thinking…</p> : null}
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <textarea
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              placeholder="Ask Farient to benchmark, prep a comp committee slide, or explain tradeoffs…"
-              className="input min-h-[120px] resize-none"
-            />
-            <div className="flex items-center justify-between text-xs text-slate-500">
-              {error ? <span className="text-red-500">{error}</span> : <span>Answers cite mock sources on demand.</span>}
-              <button
-                type="submit"
-                disabled={pending || !draft.trim()}
-                className="btn btn-primary disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {pending ? "Sending…" : "Send"}
-              </button>
-            </div>
-          </form>
-        </div>
-      </Section>
+  const commandBarNode = (
+    <div className="space-y-2">
+      {error ? <p className="text-center text-xs text-red-400">{error}</p> : null}
+      <CommandBar
+        value={draft}
+        onChange={setDraft}
+        onSend={() => handleSend(draft)}
+        onStop={handleStop}
+        pending={pending}
+        placeholder="Benchmark peers, prep comp committee slides, or explain pay-mix tradeoffs…"
+        suggestions={commandSuggestions}
+      />
     </div>
   );
+
+  return (
+    <CopilotShell
+      headerAction={<ThemeToggle />}
+      chips={chipsNode}
+      conversation={conversationNode}
+      contextRail={contextRailNode}
+      commandBar={commandBarNode}
+    />
+  );
+}
+
+function buildQuickWorkflows(inputs?: Inputs, bands?: Output, roleBand?: RoleBandSelection): QuickWorkflowChip[] {
+  const role = roleBand?.roleLabel ?? "executive role";
+  const bandWindow = bands
+    ? `$${bands.baseMin.toLocaleString()} – $${bands.baseMax.toLocaleString()}`
+    : "the recommended band";
+  const company = inputs?.company ?? "mid-cap peer";
+
+  return [
+    {
+      id: "benchmark",
+      label: "Benchmark vs peers",
+      helper: "Compare pay mix + TSR",
+      prompt: `Benchmark ${role} compensation vs ${company} peers and highlight where ${bandWindow} sits among quartiles. Include pay-mix vs TSR commentary.`
+    },
+    {
+      id: "p4p",
+      label: "Pay-for-performance alignment",
+      helper: "Last 3 years",
+      prompt: `Evaluate pay-for-performance alignment for the ${role}. Use the stored bands, explain whether the current mix rewards TSR, and flag any concerns for the comp committee.`
+    },
+    {
+      id: "tradeoffs",
+      label: "Explain tradeoffs",
+      helper: "Cash vs equity",
+      prompt: `Explain cash vs equity tradeoffs for the ${role} using the stored mix preference and parity guardrail. Recommend a mix that balances attraction and retention.`
+    }
+  ];
+}
+
+function buildAssistantPanelBase(
+  inputs?: Inputs,
+  bands?: Output,
+  roleBand?: RoleBandSelection
+): Pick<AssistantPanelModel, "contextChips" | "kpis" | "bands"> {
+  const contextChips: { label: string; value: string }[] = [];
+  if (roleBand) contextChips.push({ label: "Role", value: describeRoleBand(roleBand) ?? "Role band" });
+  if (inputs?.company) contextChips.push({ label: "Company", value: inputs.company });
+  if (inputs?.location) contextChips.push({ label: "Location", value: formatLocation(inputs.location) });
+
+  const kpis = [
+    inputs?.parity ? { label: "Parity guardrail", value: formatParity(inputs.parity) } : null,
+    inputs?.mix ? { label: "Cash vs equity", value: formatMix(inputs.mix) } : null,
+    inputs?.role?.directs
+      ? {
+          label: "Scope",
+          value: `${inputs.role.directs} directs`,
+          help: inputs.role.hasPNL ? "Owns P&L" : "No P&L ownership"
+        }
+      : null
+  ].filter(Boolean) as AssistantPanelModel["kpis"];
+
+  const bandStats = bands
+    ? {
+        base: `$${bands.baseMin.toLocaleString()} – $${bands.baseMax.toLocaleString()}`,
+        bonus: `${bands.bonusPct}% of base`,
+        lti: `$${bands.ltiAnnual.toLocaleString()}`
+      }
+    : undefined;
+
+  return { contextChips, kpis, bands: bandStats };
+}
+
+function buildAssistantPanelModel(content: string, base: ReturnType<typeof buildAssistantPanelBase>) {
+  const sections = parseSections(content);
+  const title = sections.headings[0] ?? "Compensation insight";
+  const subtitle = sections.summary;
+  const materialGaps = getSectionItems(sections, ["gap"]);
+  const tradeoffs = getSectionItems(sections, ["tradeoff", "mix"]);
+  const actions = getSectionItems(sections, ["action", "next", "plan"]);
+  const evidenceLines = getSectionItems(sections, ["evidence", "source"]);
+  const evidence = evidenceLines.map(parseEvidenceLine).filter(Boolean) as AssistantPanelModel["evidence"];
+
+  return {
+    title,
+    subtitle,
+    contextChips: base.contextChips,
+    kpis: base.kpis,
+    bands: base.bands,
+    materialGaps: materialGaps.length ? materialGaps : sections.defaultBullets,
+    tradeoffs,
+    actions,
+    evidence
+  };
+}
+
+function parseSections(content: string) {
+  const lines = content.split(/\r?\n/).map((line) => line.trim());
+  const headings: string[] = [];
+  const sectionMap = new Map<string, string[]>();
+  let current = "summary";
+  sectionMap.set(current, []);
+
+  lines.forEach((line) => {
+    if (!line) return;
+    if (line.startsWith("### ")) {
+      current = line.slice(4).toLowerCase();
+      headings.push(line.replace("### ", ""));
+      if (!sectionMap.has(current)) sectionMap.set(current, []);
+      return;
+    }
+    if (!sectionMap.has(current)) sectionMap.set(current, []);
+    sectionMap.get(current)?.push(line);
+  });
+
+  const defaultBullets =
+    sectionMap
+      .get("summary")
+      ?.filter((item) => item.startsWith("-"))
+      .map((item) => item.replace(/^-+\s?/, "")) ?? [];
+
+  const summaryText = sectionMap.get("summary")?.find((item) => !item.startsWith("-")) ?? undefined;
+
+  return { headings, sectionMap, defaultBullets, summary: summaryText };
+}
+
+function getSectionItems(
+  parsed: ReturnType<typeof parseSections>,
+  keywords: string[]
+): string[] {
+  const entry = Array.from(parsed.sectionMap.entries()).find(([key]) =>
+    keywords.some((kw) => key.includes(kw))
+  );
+  if (!entry) return [];
+  const [, values] = entry;
+  return values.map((value) => value.replace(/^-+\s?/, "")).filter(Boolean);
+}
+
+function parseEvidenceLine(line: string) {
+  if (!line) return null;
+  const match = line.match(/(.+)\((.+)\)$/);
+  if (match) {
+    return { label: match[1].trim(), source: match[2].replace(")", "").trim() };
+  }
+  return { label: line, source: "mock" };
 }
 
 function buildAutoPromptMessage(payload: AutoPromptPayload) {
@@ -314,7 +416,26 @@ function describeRoleBand(selection?: RoleBandSelection) {
   if (!selection) return undefined;
   const displayLabel =
     ROLE_BANDS.find((band) => band.key === selection.bandKey)?.label ?? selection.bandKey;
-  return `${displayLabel} - ${selection.roleLabel}`;
+  return `${displayLabel} – ${selection.roleLabel}`;
+}
+
+function formatLocation(value: NonNullable<Inputs["location"]>) {
+  switch (value) {
+    case "Tier1_NY_SF":
+      return "Tier 1 (NY/SF)";
+    case "Tier2_BOS_DAL_AUS":
+      return "Tier 2 (BOS/DAL/AUS)";
+    default:
+      return "Tier 3 (Other)";
+  }
+}
+
+function formatParity(value: NonNullable<Inputs["parity"]>) {
+  return value === "MatchBands" ? "Match existing bands" : "Flexible";
+}
+
+function formatMix(value: NonNullable<Inputs["mix"]>) {
+  return value === "FavorCash" ? "Favor cash" : "Favor equity";
 }
 
 function buildSystemPrompt(inputs?: Inputs, bands?: Output, roleBandSummary?: string) {
@@ -322,68 +443,3 @@ function buildSystemPrompt(inputs?: Inputs, bands?: Output, roleBandSummary?: st
   if (!roleBandSummary) return base;
   return `${base}\nRole band focus: ${roleBandSummary}`;
 }
-
-function AssistantMessage({ content }: { content: string }) {
-  const nodes = useMemo(() => formatAssistantContent(content), [content]);
-  return <div className="space-y-2">{nodes}</div>;
-}
-
-function formatAssistantContent(text: string) {
-  const lines = text.split("\n");
-  const nodes: ReactNode[] = [];
-  let listItems: string[] = [];
-
-  const flushList = () => {
-    if (!listItems.length) return;
-    nodes.push(
-      <ul key={`list-${nodes.length}`} className="ml-4 list-disc space-y-1 text-sm text-slate-700 dark:text-slate-200">
-        {listItems.map((item, idx) => (
-          <li key={idx}>{item}</li>
-        ))}
-      </ul>
-    );
-    listItems = [];
-  };
-
-  lines.forEach((rawLine) => {
-    const line = rawLine.trim();
-    if (!line) {
-      flushList();
-      return;
-    }
-    if (line.startsWith("### ")) {
-      flushList();
-      nodes.push(
-        <p key={`heading-${nodes.length}`} className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-300">
-          {line.replace("### ", "")}
-        </p>
-      );
-      return;
-    }
-    if (line.startsWith("- ")) {
-      listItems.push(line.slice(2));
-      return;
-    }
-    const strongMatch = line.match(/^\*\*(.+?)\*\*:(.*)$/);
-    if (strongMatch) {
-      flushList();
-      nodes.push(
-        <p key={`strong-${nodes.length}`} className="text-sm text-slate-700 dark:text-slate-200">
-          <span className="font-semibold">{strongMatch[1]}:</span>
-          <span>{strongMatch[2]}</span>
-        </p>
-      );
-      return;
-    }
-    flushList();
-    nodes.push(
-      <p key={`paragraph-${nodes.length}`} className="text-sm text-slate-700 dark:text-slate-200">
-        {line}
-      </p>
-    );
-  });
-
-  flushList();
-  return nodes.length ? nodes : [<p key="fallback">{text}</p>];
-}
-
