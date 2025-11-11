@@ -1,12 +1,8 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import type { Inputs, Output } from "@/lib/farient/types";
 import { systemPrompt } from "@/lib/farient/prompt";
-import QuickWorkflows from "./QuickWorkflows";
-import EvidenceDrawer from "./EvidenceDrawer";
-import PeerList from "./PeerList";
-import Handoffs from "./Handoffs";
 import { LS_KEY, LS_OUT, readJSON } from "../ls";
 import type { BuilderState } from "../OutputBuilder/state";
 import { ROLE_BANDS } from "@/lib/roles";
@@ -97,7 +93,7 @@ export default function ChatPanel({ onAsk }: ChatPanelProps) {
     if (bands) {
       chips.push({
         label: "Band window",
-        value: `$${bands.baseMin.toLocaleString()} – $${bands.baseMax.toLocaleString()}`
+        value: `$${bands.baseMin.toLocaleString()} - $${bands.baseMax.toLocaleString()}`
       });
     }
     return chips;
@@ -106,7 +102,7 @@ export default function ChatPanel({ onAsk }: ChatPanelProps) {
   const bandSummary = useMemo(() => {
     if (!bands) return undefined;
     return {
-      base: `$${bands.baseMin.toLocaleString()} – $${bands.baseMax.toLocaleString()}`,
+      base: `$${bands.baseMin.toLocaleString()} - $${bands.baseMax.toLocaleString()}`,
       bonus: `${bands.bonusPct}%`,
       lti: `$${bands.ltiAnnual.toLocaleString()}`
     };
@@ -188,14 +184,6 @@ export default function ChatPanel({ onAsk }: ChatPanelProps) {
         ) : null}
       </Section>
 
-      <QuickWorkflows
-        inputs={inputs}
-        bands={bands}
-        roleBandSummary={roleBandSummary}
-        disabled={pending}
-        onSelect={(prompt) => void handleSend(prompt)}
-      />
-
       {!contextReady ? (
         <div className="rounded-2xl border border-dashed border-amber-400 bg-amber-50/60 p-4 text-sm text-amber-700">
           Finish the builder steps and generate bands to unlock fully contextual responses.
@@ -204,7 +192,7 @@ export default function ChatPanel({ onAsk }: ChatPanelProps) {
 
       <Section title="Conversation" subtitle="Chat with Farient using the stored context.">
         <div className="card space-y-3 p-4">
-          <div className="max-h-[420px] space-y-3 overflow-y-auto pr-1">
+          <div className="max-h-[520px] space-y-3 overflow-y-auto pr-1">
             {messages.length === 0 ? (
               <p className="text-sm text-slate-600 dark:text-slate-400">
                 No conversation yet. Kick things off with a quick workflow or type a question below.
@@ -216,11 +204,17 @@ export default function ChatPanel({ onAsk }: ChatPanelProps) {
                   className={`rounded-2xl border px-4 py-3 text-sm shadow-soft ${
                     message.role === "user"
                       ? "border-text bg-text text-bg"
-                      : "border-border bg-card/70 text-slate-800 dark:text-slate-100"
+                      : "border-slate-200 bg-white/90 text-slate-800 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-100"
                   }`}
                 >
                   <p className="text-xs uppercase tracking-wide opacity-70">{message.role}</p>
-                  <p className="mt-1 whitespace-pre-wrap">{message.content}</p>
+                  <div className="mt-2 text-sm leading-relaxed">
+                    {message.role === "assistant" ? (
+                      <AssistantMessage content={message.content} />
+                    ) : (
+                      <p className="whitespace-pre-wrap">{message.content}</p>
+                    )}
+                  </div>
                 </div>
               ))
             )}
@@ -247,12 +241,6 @@ export default function ChatPanel({ onAsk }: ChatPanelProps) {
           </form>
         </div>
       </Section>
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <EvidenceDrawer />
-        <PeerList />
-        <Handoffs />
-      </div>
     </div>
   );
 }
@@ -261,4 +249,68 @@ function buildSystemPrompt(inputs?: Inputs, bands?: Output, roleBandSummary?: st
   const base = systemPrompt(inputs, bands);
   if (!roleBandSummary) return base;
   return `${base}\nRole band focus: ${roleBandSummary}`;
+}
+
+function AssistantMessage({ content }: { content: string }) {
+  const nodes = useMemo(() => formatAssistantContent(content), [content]);
+  return <div className="space-y-2">{nodes}</div>;
+}
+
+function formatAssistantContent(text: string) {
+  const lines = text.split("\n");
+  const nodes: ReactNode[] = [];
+  let listItems: string[] = [];
+
+  const flushList = () => {
+    if (!listItems.length) return;
+    nodes.push(
+      <ul key={`list-${nodes.length}`} className="ml-4 list-disc space-y-1 text-sm text-slate-700 dark:text-slate-200">
+        {listItems.map((item, idx) => (
+          <li key={idx}>{item}</li>
+        ))}
+      </ul>
+    );
+    listItems = [];
+  };
+
+  lines.forEach((rawLine) => {
+    const line = rawLine.trim();
+    if (!line) {
+      flushList();
+      return;
+    }
+    if (line.startsWith("### ")) {
+      flushList();
+      nodes.push(
+        <p key={`heading-${nodes.length}`} className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-300">
+          {line.replace("### ", "")}
+        </p>
+      );
+      return;
+    }
+    if (line.startsWith("- ")) {
+      listItems.push(line.slice(2));
+      return;
+    }
+    const strongMatch = line.match(/^\*\*(.+?)\*\*:(.*)$/);
+    if (strongMatch) {
+      flushList();
+      nodes.push(
+        <p key={`strong-${nodes.length}`} className="text-sm text-slate-700 dark:text-slate-200">
+          <span className="font-semibold">{strongMatch[1]}:</span>
+          <span>{strongMatch[2]}</span>
+        </p>
+      );
+      return;
+    }
+    flushList();
+    nodes.push(
+      <p key={`paragraph-${nodes.length}`} className="text-sm text-slate-700 dark:text-slate-200">
+        {line}
+      </p>
+    );
+  });
+
+  flushList();
+  return nodes.length ? nodes : [<p key="fallback">{text}</p>];
 }

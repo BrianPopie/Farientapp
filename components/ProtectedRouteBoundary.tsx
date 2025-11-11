@@ -9,8 +9,8 @@ type Status = "loading" | "authenticated" | "unauthenticated";
 export default function ProtectedRouteBoundary({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [status, setStatus] = useState<Status>("loading");
   const redirected = useRef(false);
+  const [status, setStatus] = useState<Status>("loading");
 
   useEffect(() => {
     const sync = () => setStatus(fakeAuth.isAuthed() ? "authenticated" : "unauthenticated");
@@ -27,8 +27,6 @@ export default function ProtectedRouteBoundary({ children }: { children: ReactNo
     if (!redirected.current && status === "unauthenticated" && pathname !== "/login") {
       redirected.current = true;
       router.replace("/login");
-    } else if (status === "authenticated") {
-      redirected.current = false;
     }
   }, [status, pathname, router]);
 

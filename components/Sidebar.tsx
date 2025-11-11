@@ -2,79 +2,43 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { FileStack, Presentation, Home, MessageSquare, ShieldCheck } from "lucide-react";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { fakeAuth } from "@/lib/fakeAuth";
-import { useRouter } from "next/navigation";
 
-const navItems = [
-  { href: "/dashboard", label: "Overview", icon: Home },
-  { href: "/filings", label: "Ingestion", icon: FileStack },
-  { href: "/ai", label: "AI Chatbot", icon: MessageSquare },
-  { href: "/reports", label: "Reports", icon: Presentation },
-  { href: "/admin", label: "Admin", icon: ShieldCheck }
+const NAV_ITEMS = [
+  { href: "/dashboard", label: "Dashboard" },
+  { href: "/ai", label: "AI" },
+  { href: "/settings", label: "Settings" }
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
-  const router = useRouter();
-
-  const handleSignOut = () => {
-    fakeAuth.signOut();
-    router.push("/login");
-  };
 
   return (
-    <aside className="sticky top-0 hidden h-screen w-[240px] flex-col overflow-y-auto border-r border-border bg-[rgba(var(--bg),0.9)] p-4 text-text shadow-[0_25px_80px_rgba(0,0,0,0.55)] backdrop-blur-xl lg:flex z-20">
-      <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-surface/60 px-3 py-2">
-        <Image src="/brand.svg" width={32} height={32} alt="Farient" className="rounded-lg" />
-        <div>
-          <p className="text-[0.7rem] uppercase tracking-[0.32em] text-text-muted">Workspace</p>
-          <p className="text-sm font-semibold text-text">Farient Deal Intelligence</p>
-        </div>
+    <aside className="hidden w-[240px] shrink-0 flex-col border-r border-border bg-card lg:flex">
+      <div className="p-4 text-sm font-semibold uppercase tracking-[0.3em] text-slate-500 dark:text-slate-300">
+        Workspace
       </div>
-
-      <nav className="mt-6 flex flex-1 flex-col gap-1">
-        {navItems.map((item) => {
-          const active = pathname === item.href;
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "w-full rounded-full px-3 py-2 text-sm font-medium transition data-[active=true]:bg-surface data-[active=true]:text-text data-[active=true]:shadow-inner hover:bg-muted/70 hover:text-text",
-                active ? "text-text" : "text-text-muted"
-              )}
-              data-active={active || undefined}
-            >
-              <span className="inline-flex items-center gap-2">
-                <Icon className="h-4 w-4 text-accent" />
-                {item.label}
-              </span>
-            </Link>
-          );
-        })}
+      <nav className="flex-1 px-3 py-2">
+        <ul className="space-y-1">
+          {NAV_ITEMS.map(({ href, label }) => {
+            const active = pathname === href;
+            return (
+              <li key={href}>
+                <Link
+                  href={href}
+                  prefetch={false}
+                  className={`block rounded-lg px-3 py-2 text-sm transition-colors ${
+                    active
+                      ? "bg-muted/10 text-slate-900 dark:text-slate-50"
+                      : "text-slate-600 dark:text-slate-300 hover:bg-border/30"
+                  }`}
+                >
+                  {label}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
       </nav>
-
-      <div className="mt-6 rounded-xl border border-border/70 bg-surface/70 p-3 text-xs text-text-muted">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-semibold text-text">Session</p>
-            <p className="text-[11px] uppercase tracking-wide text-text-muted">demo@farient.ai</p>
-          </div>
-          <Button
-            type="button"
-            variant="secondary"
-            className="rounded-full bg-accent/10 px-3 py-1 text-[11px] font-semibold text-accent hover:bg-accent/20"
-            onClick={handleSignOut}
-          >
-            Sign out
-          </Button>
-        </div>
-      </div>
     </aside>
   );
 }
