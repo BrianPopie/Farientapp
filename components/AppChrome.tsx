@@ -1,3 +1,5 @@
+"use client";
+
 import dynamic from "next/dynamic";
 import type { ReactNode } from "react";
 import { CitationDrawer } from "@/components/CitationDrawer";
