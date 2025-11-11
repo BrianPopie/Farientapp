@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { LoginForm } from "@/components/LoginForm";
 import VideoBackground from "@/components/VideoBackground";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const dynamic = "force-static";
 
@@ -9,6 +10,9 @@ export default function LoginPage() {
   return (
     <main className="relative flex min-h-screen w-screen items-center justify-center overflow-hidden bg-background">
       <VideoBackground />
+      <div className="absolute right-6 top-6 z-20">
+        <ThemeToggle />
+      </div>
       <div className="relative z-10 w-full max-w-sm rounded-2xl border border-border/70 bg-card px-6 py-8 text-black dark:text-card-foreground shadow-elev-3 backdrop-blur-xl">
         <div className="flex flex-col items-center gap-2 text-center">
           <Image src="/brand.svg" alt="Farient logo" width={48} height={48} className="rounded-xl" priority />
