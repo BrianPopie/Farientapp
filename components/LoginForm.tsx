@@ -65,9 +65,9 @@ export function LoginForm() {
   };
 
   return (
-    <form onSubmit={onSubmit} className="mt-6 grid gap-4 text-white">
+    <form onSubmit={onSubmit} className="mt-6 grid gap-4 text-black dark:text-white">
       <div className="grid gap-2">
-        <Label id={emailLabelId} htmlFor={emailId} className="text-white/90">
+        <Label id={emailLabelId} htmlFor={emailId} className="text-black/80 dark:text-white/90">
           Email
         </Label>
         <Input
@@ -78,11 +78,11 @@ export function LoginForm() {
           placeholder="you@company.com"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          className="border-white/30 bg-white/10 text-white caret-white placeholder:text-white/60 focus-visible:ring-white/70"
+          className="border-black/10 bg-white/70 text-black caret-black placeholder:text-black/40 focus-visible:ring-ring dark:border-white/30 dark:bg-white/10 dark:text-white dark:caret-white dark:placeholder:text-white/60"
         />
       </div>
       <div className="grid gap-2">
-        <Label id={passwordLabelId} htmlFor={passwordId} className="text-white/90">
+        <Label id={passwordLabelId} htmlFor={passwordId} className="text-black/80 dark:text-white/90">
           Password
         </Label>
         <Input
@@ -93,18 +93,18 @@ export function LoginForm() {
           placeholder="6-digit password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
-          className="border-white/30 bg-white/10 text-white caret-white placeholder:text-white/60 focus-visible:ring-white/70"
+          className="border-black/10 bg-white/70 text-black caret-black placeholder:text-black/40 focus-visible:ring-ring dark:border-white/30 dark:bg-white/10 dark:text-white dark:caret-white dark:placeholder:text-white/60"
         />
       </div>
-      {err && <div className="text-xs text-red-200">{err}</div>}
+      {err && <div className="text-xs text-red-500 dark:text-red-200">{err}</div>}
       <Button
         type="submit"
         disabled={loading}
-        className="mt-1 bg-white/20 text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] hover:bg-white/30"
+        className="mt-1 bg-black text-white shadow-[0_10px_30px_rgba(0,0,0,0.25)] hover:bg-black/90 dark:bg-white/20 dark:text-white dark:hover:bg-white/30"
       >
         {loading ? "Signing in..." : "Sign in"}
       </Button>
-      <div className="pb-2 text-center text-xs text-white/70">
+      <div className="pb-2 text-center text-xs text-black/60 dark:text-white/70">
         or continue with <span className="opacity-60">(mock buttons)</span>
       </div>
     </form>

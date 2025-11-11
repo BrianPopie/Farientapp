@@ -1,94 +1,63 @@
 "use client";
+
 import * as React from "react";
-
-type NetworkInformation = {
-  saveData?: boolean;
-  addEventListener?: (type: string, listener: () => void) => void;
-  removeEventListener?: (type: string, listener: () => void) => void;
-};
-
-type NavigatorWithMemory = Navigator & {
-  deviceMemory?: number;
-  connection?: NetworkInformation;
-};
 
 type Props = {
   src?: string;
   poster?: string;
   className?: string;
-  forceVideo?: boolean;
+  overlayOpacity?: number;
 };
 
-export default function VideoBackground({ src = "/animation.mp4", poster, className = "", forceVideo = false }: Props) {
-  const [shouldPlayVideo, setShouldPlayVideo] = React.useState(() => forceVideo);
+export default function VideoBackground({
+  src = "/animation.mp4",
+  poster = "/login-poster.jpg",
+  className = "",
+  overlayOpacity = 40
+}: Props) {
+  const [motionOK, setMotionOK] = React.useState(true);
 
   React.useEffect(() => {
-    if (forceVideo) {
-      setShouldPlayVideo(true);
-      return;
-    }
-
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    const nav = navigator as NavigatorWithMemory;
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-    const evaluate = () => {
-      const prefersReducedMotion = mediaQuery.matches;
-      const connection = nav.connection;
-      const saveData = Boolean(connection?.saveData);
-      const deviceMemory = typeof nav.deviceMemory === "number" ? nav.deviceMemory : undefined;
-      const lowMemory = typeof deviceMemory === "number" && deviceMemory <= 4;
-      const disableParam = new URLSearchParams(window.location.search).has("novideo");
-      let embedded = false;
-      try {
-        embedded = typeof window.top !== "undefined" && window.top !== window.self;
-      } catch {
-        embedded = true;
-      }
-      setShouldPlayVideo(!(prefersReducedMotion || saveData || lowMemory || disableParam || embedded));
-    };
-
-    evaluate();
-
-    const handleChange = () => evaluate();
-    mediaQuery.addEventListener?.("change", handleChange);
-    nav.connection?.addEventListener?.("change", handleChange);
-
-    return () => {
-      mediaQuery.removeEventListener?.("change", handleChange);
-      nav.connection?.removeEventListener?.("change", handleChange);
-    };
-  }, [forceVideo]);
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onChange = () => setMotionOK(!mq.matches);
+    onChange();
+    mq.addEventListener?.("change", onChange);
+    return () => mq.removeEventListener?.("change", onChange);
+  }, []);
 
   return (
     <div className={`pointer-events-none absolute inset-0 -z-10 ${className}`}>
-      {shouldPlayVideo ? (
+      <div
+        aria-hidden
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(1200px 800px at 60% -10%, rgba(56,189,248,.25) 0%, rgba(56,189,248,0) 55%), radial-gradient(1200px 800px at 85% 110%, rgba(34,197,94,.18) 0%, rgba(34,197,94,0) 60%)"
+        }}
+      />
+      {motionOK ? (
         <video
           className="absolute inset-0 h-full w-full object-cover"
+          src={src}
+          poster={poster}
           autoPlay
           muted
           loop
           playsInline
-          preload="auto"
-          {...(poster ? { poster } : {})}
-        >
-          <source src={src} type="video/mp4" />
-        </video>
+          preload="metadata"
+        />
       ) : (
         <div
-          className="absolute inset-0 h-full w-full bg-cover bg-center"
-          style={
-            poster
-              ? { backgroundImage: `url(${poster})` }
-              : { background: "radial-gradient(circle at 30% 20%, rgba(99,102,241,0.35), transparent 55%)" }
-          }
           aria-hidden
+          className="absolute inset-0 h-full w-full bg-center bg-cover"
+          style={{ backgroundImage: `url(${poster})` }}
         />
       )}
-      <div className="absolute inset-0 bg-[radial-gradient(120%_120%_at_80%_-20%,rgba(0,0,0,.25)_0%,rgba(0,0,0,.55)_40%,rgba(0,0,0,.75)_100%)]" />
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-black"
+        style={{ opacity: overlayOpacity / 100 }}
+      />
     </div>
   );
 }
