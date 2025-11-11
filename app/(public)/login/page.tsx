@@ -1,26 +1,26 @@
 import Image from "next/image";
 import Link from "next/link";
 import { LoginForm } from "@/components/LoginForm";
-import VideoBackground from "@/components/VideoBackground";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const dynamic = "force-static";
 
 export default function LoginPage() {
   return (
-    <main className="relative flex min-h-screen w-screen items-center justify-center overflow-hidden">
-      <VideoBackground />
+    <main className="relative flex min-h-screen w-screen items-center justify-center overflow-hidden bg-gradient-to-br from-[#040a1a] via-[#0b1330] to-[#141f3f] dark:from-[#02030a] dark:via-[#050914] dark:to-[#0c1222]">
       <div className="absolute right-6 top-6 z-20">
         <ThemeToggle className="text-white border-white/30 hover:bg-white/10" />
       </div>
-      <div className="relative z-10 w-full max-w-sm rounded-2xl bg-white/10 px-6 py-8 text-white shadow-xl ring-1 ring-white/15 backdrop-blur-xl">
+      <div className="relative z-10 w-full max-w-sm rounded-2xl bg-card/95 px-6 py-8 text-foreground shadow-xl ring-1 ring-white/15 backdrop-blur-xl dark:bg-white/10 dark:text-white">
         <div className="flex flex-col items-center gap-2 text-center">
           <Image src="/brand.svg" alt="Farient logo" width={48} height={48} className="rounded-xl" priority />
-          <div className="text-xs uppercase tracking-[0.35em] text-white/70">Farient Deal Intelligence</div>
-          <h1 className="text-xl font-semibold text-white">Login</h1>
+          <div className="text-xs uppercase tracking-[0.35em] text-muted-foreground dark:text-white/70">
+            Farient Deal Intelligence
+          </div>
+          <h1 className="text-xl font-semibold">Login</h1>
         </div>
         <LoginForm />
-        <div className="mt-4 text-center text-sm text-white/80">
+        <div className="mt-4 text-center text-sm text-foreground dark:text-white/80">
           <Link
             href="/dashboard"
             prefetch={false}

@@ -13,7 +13,6 @@ export default function VideoBackground({
   forceMotion?: boolean;
 }) {
   const [motionOK, setMotionOK] = React.useState(true);
-  const [ok, setOk] = React.useState(false);
   const [err, setErr] = React.useState<string | null>(null);
 
   React.useEffect(() => {
@@ -48,7 +47,6 @@ export default function VideoBackground({
           playsInline
           preload="metadata"
           poster={poster}
-          onCanPlayThrough={() => setOk(true)}
           onError={(e) => {
             const el = e.currentTarget as HTMLVideoElement;
             console.error("Video error:", el.currentSrc);
