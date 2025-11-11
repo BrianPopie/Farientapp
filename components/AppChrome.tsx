@@ -7,6 +7,7 @@ import { AUTH_EVENT, fakeAuth } from "@/lib/fakeAuth";
 import { CitationDrawer } from "@/components/CitationDrawer";
 import { DevConsoleSilencer } from "@/components/DevConsoleSilencer";
 import { FocusModeProvider } from "@/hooks/useFocusMode";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const SidebarPanel = dynamic(() => import("@/components/Sidebar").then((mod) => ({ default: mod.Sidebar })), {
   ssr: false,
@@ -65,7 +66,7 @@ export function AppChrome({ children }: AppChromeProps) {
   );
 
   return (
-    <>
+    <ThemeProvider>
       <DevConsoleSilencer />
       {!authed ? (
         renderLoading("Validating session…")
@@ -89,6 +90,6 @@ export function AppChrome({ children }: AppChromeProps) {
           </>
         </FocusModeProvider>
       )}
-    </>
+    </ThemeProvider>
   );
 }

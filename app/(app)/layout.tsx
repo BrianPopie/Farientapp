@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { Suspense } from "react";
-import { ThemeProvider } from "@/components/ThemeProvider";
 import { ProtectedRouteBoundary } from "@/components/ProtectedRouteBoundary";
 import { AppChrome } from "@/components/AppChrome";
 import ClientRuntimeListener from "@/app/(instrumentation)/client-runtime-listener";
@@ -8,7 +7,7 @@ import { RenderProbe } from "@/components/RenderProbe";
 
 export default function AppGroupLayout({ children }: { children: ReactNode }) {
   return (
-    <ThemeProvider>
+    <>
       <ClientRuntimeListener />
       <ProtectedRouteBoundary>
         <Suspense fallback={null}>
@@ -20,6 +19,6 @@ export default function AppGroupLayout({ children }: { children: ReactNode }) {
         </Suspense>
       </ProtectedRouteBoundary>
       <RenderProbe label="app/(app)/layout" />
-    </ThemeProvider>
+    </>
   );
 }
