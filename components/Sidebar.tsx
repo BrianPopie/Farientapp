@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import { FileStack, Presentation, Home, MessageSquare, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { fakeAuth } from "@/lib/fakeAuth";
+import { useRouter } from "next/navigation";
 
 const navItems = [
   { href: "/dashboard", label: "Overview", icon: Home },
@@ -15,13 +17,14 @@ const navItems = [
   { href: "/admin", label: "Admin", icon: ShieldCheck }
 ];
 
-interface SidebarProps {
-  authed: boolean;
-  onSignOut?: () => void;
-}
-
-export function Sidebar({ authed, onSignOut }: SidebarProps) {
+export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleSignOut = () => {
+    fakeAuth.signOut();
+    router.push("/login");
+  };
 
   return (
     <aside className="sticky top-0 hidden h-screen w-[240px] flex-col overflow-y-auto border-r border-border bg-[rgba(var(--bg),0.9)] p-4 text-text shadow-[0_25px_80px_rgba(0,0,0,0.55)] backdrop-blur-xl lg:flex z-20">
@@ -56,24 +59,22 @@ export function Sidebar({ authed, onSignOut }: SidebarProps) {
         })}
       </nav>
 
-      {authed && (
-        <div className="mt-6 rounded-xl border border-border/70 bg-surface/70 p-3 text-xs text-text-muted">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-semibold text-text">Session</p>
-              <p className="text-[11px] uppercase tracking-wide text-text-muted">demo@farient.ai</p>
-            </div>
-            <Button
-              type="button"
-              variant="secondary"
-              className="rounded-full bg-accent/10 px-3 py-1 text-[11px] font-semibold text-accent hover:bg-accent/20"
-              onClick={onSignOut}
-            >
-              Sign out
-            </Button>
+      <div className="mt-6 rounded-xl border border-border/70 bg-surface/70 p-3 text-xs text-text-muted">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-semibold text-text">Session</p>
+            <p className="text-[11px] uppercase tracking-wide text-text-muted">demo@farient.ai</p>
           </div>
+          <Button
+            type="button"
+            variant="secondary"
+            className="rounded-full bg-accent/10 px-3 py-1 text-[11px] font-semibold text-accent hover:bg-accent/20"
+            onClick={handleSignOut}
+          >
+            Sign out
+          </Button>
         </div>
-      )}
+      </div>
     </aside>
   );
 }

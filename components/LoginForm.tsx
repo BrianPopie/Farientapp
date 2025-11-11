@@ -78,7 +78,7 @@ export function LoginForm() {
           placeholder="you@company.com"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          className="border-white/30 bg-white/10 placeholder:text-white/60"
+          className="border-white/30 bg-white/10 text-white caret-white placeholder:text-white/60 focus-visible:ring-white/70"
         />
       </div>
       <div className="grid gap-2">
@@ -93,7 +93,7 @@ export function LoginForm() {
           placeholder="6-digit password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
-          className="border-white/30 bg-white/10 placeholder:text-white/60"
+          className="border-white/30 bg-white/10 text-white caret-white placeholder:text-white/60 focus-visible:ring-white/70"
         />
       </div>
       {err && <div className="text-xs text-red-200">{err}</div>}

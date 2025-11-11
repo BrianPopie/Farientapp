@@ -1,13 +1,8 @@
-"use client";
-
 import dynamic from "next/dynamic";
-import { Suspense, type ReactNode, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
-import { AUTH_EVENT, fakeAuth } from "@/lib/fakeAuth";
+import type { ReactNode } from "react";
 import { CitationDrawer } from "@/components/CitationDrawer";
 import { DevConsoleSilencer } from "@/components/DevConsoleSilencer";
-import { FocusModeProvider } from "@/hooks/useFocusMode";
-import { ThemeProvider } from "@/components/ThemeProvider";
+import ClientRuntimeListener from "@/app/(instrumentation)/client-runtime-listener";
 
 const SidebarPanel = dynamic(() => import("@/components/Sidebar").then((mod) => ({ default: mod.Sidebar })), {
   ssr: false,
@@ -27,69 +22,21 @@ const NavBar = dynamic(() => import("@/components/Nav").then((mod) => ({ default
   )
 });
 
-interface AppChromeProps {
-  children: ReactNode;
-}
-
-export function AppChrome({ children }: AppChromeProps) {
-  const [authed, setAuthed] = useState<boolean>(() => fakeAuth.isAuthed());
-  const router = useRouter();
-
-  useEffect(() => {
-    const update = () => setAuthed(fakeAuth.isAuthed());
-    window.addEventListener(AUTH_EVENT, update);
-    window.addEventListener("focus", update);
-    return () => {
-      window.removeEventListener(AUTH_EVENT, update);
-      window.removeEventListener("focus", update);
-    };
-  }, []);
-
-  const focusValue = useMemo(
-    () => ({
-      focusMode: true,
-      setFocusMode: () => {},
-      toggleFocusMode: () => {}
-    }),
-    []
-  );
-
-  const handleSignOut = () => {
-    fakeAuth.signOut();
-    router.push("/login");
-  };
-
-  const renderLoading = (message = "Loading workspace…") => (
-    <div className="flex min-h-screen w-full items-center justify-center bg-bg text-text">
-      <p className="text-sm text-text-muted">{message}</p>
-    </div>
-  );
-
+export function AppChrome({ children }: { children: ReactNode }) {
   return (
-    <ThemeProvider>
+    <>
       <DevConsoleSilencer />
-      {!authed ? (
-        renderLoading("Validating session…")
-      ) : (
-        <FocusModeProvider value={focusValue}>
-          <>
-            <div className="w-full">
-              <div className="grid min-h-screen grid-cols-[240px_minmax(0,1fr)] bg-bg">
-                <Suspense fallback={null}>
-                  <SidebarPanel authed={authed} onSignOut={handleSignOut} />
-                </Suspense>
-                <div className="flex flex-col">
-                  <Suspense fallback={null}>
-                    <NavBar />
-                  </Suspense>
-                  <div className="flex-1">{children}</div>
-                </div>
-              </div>
-            </div>
-            {process.env.NODE_ENV === "development" ? null : <CitationDrawer />}
-          </>
-        </FocusModeProvider>
-      )}
-    </ThemeProvider>
+      <ClientRuntimeListener />
+      <div className="w-full">
+        <div className="grid min-h-screen grid-cols-[240px_minmax(0,1fr)] bg-bg">
+          <SidebarPanel />
+          <div className="flex flex-col">
+            <NavBar />
+            <div className="flex-1 bg-bg">{children}</div>
+          </div>
+        </div>
+      </div>
+      {process.env.NODE_ENV === "development" ? null : <CitationDrawer />}
+    </>
   );
 }
